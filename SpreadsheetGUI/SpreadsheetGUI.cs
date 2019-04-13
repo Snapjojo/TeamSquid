@@ -79,11 +79,12 @@ namespace SpreadsheetGUI {
         /// Opens new Window
         /// </summary>
         public void OpenNew() {
+            //TODO Reimplement multiple windows using server. Link this to "open" with server and an existing window somehow.
             SpreadsheetApplicationContext.GetContext().RunNew();
         }
 
         /// <summary>
-        /// Open an existinfg file in a new window
+        /// Open an existing file in a new window
         /// </summary>
         /// <param name="filename"></param>
         public void OpenExisting(String filename) {
@@ -91,22 +92,10 @@ namespace SpreadsheetGUI {
         }
 
         /// <summary>
-        /// Handles "New" menu item click.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void NewItem_Click(object sender, EventArgs e) {
-
-            if (NewEvent != null) {
-                NewEvent();
-            }
-        }
-
-        /// <summary>
         /// Handles the Click event of the openItem control.
         /// </summary>
         private void OpenItem_Click(object sender, EventArgs e) {
-
+            //TODO Implement message sending. Add username & PW.
             fileDialog1.Filter = "SpreadSheet files (*.ss)|*.ss|All files (*.*)|*.*";
             fileDialog1.FilterIndex = 1;
             fileDialog1.RestoreDirectory = true;
@@ -339,24 +328,24 @@ namespace SpreadsheetGUI {
             }
         }
 
-        /// <summary>
-        /// Handles Save click
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void saveToolStripMenuItem_Click(object sender, EventArgs e) {
+        ///// <summary>
+        ///// Handles Save click
+        ///// </summary>
+        ///// <param name="sender"></param>
+        ///// <param name="e"></param>
+        //private void saveToolStripMenuItem_Click(object sender, EventArgs e) {
 
-            saveFileDialog1.Filter = "SpreadSheet files (*.ss)|*.ss|All files (*.*)|*.*";
-            saveFileDialog1.FilterIndex = 1;
-            saveFileDialog1.RestoreDirectory = true;
-            DialogResult result = saveFileDialog1.ShowDialog();
+        //    saveFileDialog1.Filter = "SpreadSheet files (*.ss)|*.ss|All files (*.*)|*.*";
+        //    saveFileDialog1.FilterIndex = 1;
+        //    saveFileDialog1.RestoreDirectory = true;
+        //    DialogResult result = saveFileDialog1.ShowDialog();
 
-            if (result == DialogResult.Yes || result == DialogResult.OK) {
-                if (SaveEvent != null) {
-                    SaveEvent(saveFileDialog1.FileName);
-                }
-            }
-        }
+        //    if (result == DialogResult.Yes || result == DialogResult.OK) {
+        //        if (SaveEvent != null) {
+        //            SaveEvent(saveFileDialog1.FileName);
+        //        }
+        //    }
+        //}
 
         /// <summary>
         /// When form closes check that Changed is false, otherwise prompt to save.
@@ -367,16 +356,6 @@ namespace SpreadsheetGUI {
             // Determine if text has changed in the textbox by comparing to original text.
             if(CloseEvent != null) {
                 CloseEvent();
-            }
-
-            if (Changed) {
-                // Display a MsgBox asking the user to save changes or abort.
-                if (MessageBox.Show("Do you want to save changes to your spreadsheet?", "Data Loss Warning",
-                   MessageBoxButtons.YesNo) == DialogResult.Yes) {
-                    // Cancel the Closing event from closing the form.
-                    e.Cancel = true;
-                    saveToolStripMenuItem_Click(sender, new EventArgs());
-                }
             }
         }
     }

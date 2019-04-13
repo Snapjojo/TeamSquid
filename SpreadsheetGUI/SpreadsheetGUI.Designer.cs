@@ -34,8 +34,6 @@ namespace SpreadsheetGUI {
             this.ValueBox = new System.Windows.Forms.TextBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.newItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openItem = new System.Windows.Forms.ToolStripMenuItem();
             this.closeItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -134,8 +132,6 @@ namespace SpreadsheetGUI {
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.newItem,
-            this.saveToolStripMenuItem,
             this.openItem,
             this.closeItem});
             this.fileToolStripMenuItem.ForeColor = System.Drawing.Color.White;
@@ -145,22 +141,6 @@ namespace SpreadsheetGUI {
             this.fileToolStripMenuItem.DropDownClosed += new System.EventHandler(this.menuStrip1_EnabledChanged);
             this.fileToolStripMenuItem.DropDownOpening += new System.EventHandler(this.fileToolStripMenuItem_Click);
             this.fileToolStripMenuItem.Click += new System.EventHandler(this.fileToolStripMenuItem_Click);
-            // 
-            // newItem
-            // 
-            this.newItem.Name = "newItem";
-            this.newItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-            this.newItem.Size = new System.Drawing.Size(204, 22);
-            this.newItem.Text = "New";
-            this.newItem.Click += new System.EventHandler(this.NewItem_Click);
-            // 
-            // saveToolStripMenuItem
-            // 
-            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
-            this.saveToolStripMenuItem.Text = "Save";
-            this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // openItem
             // 
@@ -276,8 +256,6 @@ namespace SpreadsheetGUI {
         private TextBox ValueBox;
         private MenuStrip menuStrip1;
         private ToolStripMenuItem fileToolStripMenuItem;
-        private ToolStripMenuItem newItem;
-        private ToolStripMenuItem saveToolStripMenuItem;
         private ToolStripMenuItem openItem;
         private ToolStripMenuItem closeItem;
         private ToolStripMenuItem optionsToolStripMenuItem;
