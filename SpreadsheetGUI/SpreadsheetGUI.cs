@@ -123,7 +123,7 @@ namespace SpreadsheetGUI {
             }
             if (passwordBox.Text == "")
             {
-                MessageBox.Show("Please enter a password.");
+                MessageBox.Show("Please enter a Password.");
                 passwordBox.Focus();
                 return;
             }
