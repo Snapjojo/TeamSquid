@@ -7,6 +7,7 @@ using System.Windows.Forms;
 
 namespace SpreadsheetGUI {
     public partial class SpreadsheetGui : Form, SpreadsheetView {
+        private Controller controller;
 
         /// <summary>
         /// Intializes Spreadsheet
@@ -60,6 +61,7 @@ namespace SpreadsheetGUI {
             spreadsheetPanel1.SetSelection(0, 0);
             spreadsheetPanel1_SelectionChanged(spreadsheetPanel1);
             ErrorLabel.Visible = false;
+            controller = SpreadsheetApplicationContext.getController();
         }
 
         /// <summary>
@@ -96,6 +98,8 @@ namespace SpreadsheetGUI {
         /// </summary>
         private void OpenItem_Click(object sender, EventArgs e) {
             //TODO Implement message sending. Add username & PW.
+
+
             fileDialog1.Filter = "SpreadSheet files (*.ss)|*.ss|All files (*.*)|*.*";
             fileDialog1.FilterIndex = 1;
             fileDialog1.RestoreDirectory = true;
@@ -104,6 +108,39 @@ namespace SpreadsheetGUI {
                 if (FileChosenEvent != null) {
                     FileChosenEvent(fileDialog1.FileName);
                 }
+            }
+        }
+
+        private void connect() {
+            //TODO GENERATE List of spreadsheets in open dropdown.
+
+            //Ensure server &name fields are filled out
+            if (usernameBox.Text == "")
+            {
+                MessageBox.Show("Please enter a username.");
+                usernameBox.Focus();
+                return;
+            }
+            if (passwordBox.Text == "")
+            {
+                MessageBox.Show("Please enter a password.");
+                passwordBox.Focus();
+                return;
+            }
+
+            // Have controller attempt connection
+            bool success = controller.StartConnection(usernameBox.Text, passwordBox.Text);
+            if (success)
+            {
+                //  Update form access & labels
+                connectButton.Enabled = false;
+                usernameBox.Enabled = false;
+                controller.MyForm = this;
+            }
+            else
+            {
+                MessageBox.Show("Server was not available or invalid input. Please try again.");
+                usernameBox.Focus();
             }
         }
 
@@ -328,25 +365,6 @@ namespace SpreadsheetGUI {
             }
         }
 
-        ///// <summary>
-        ///// Handles Save click
-        ///// </summary>
-        ///// <param name="sender"></param>
-        ///// <param name="e"></param>
-        //private void saveToolStripMenuItem_Click(object sender, EventArgs e) {
-
-        //    saveFileDialog1.Filter = "SpreadSheet files (*.ss)|*.ss|All files (*.*)|*.*";
-        //    saveFileDialog1.FilterIndex = 1;
-        //    saveFileDialog1.RestoreDirectory = true;
-        //    DialogResult result = saveFileDialog1.ShowDialog();
-
-        //    if (result == DialogResult.Yes || result == DialogResult.OK) {
-        //        if (SaveEvent != null) {
-        //            SaveEvent(saveFileDialog1.FileName);
-        //        }
-        //    }
-        //}
-
         /// <summary>
         /// When form closes check that Changed is false, otherwise prompt to save.
         /// </summary>
@@ -357,6 +375,11 @@ namespace SpreadsheetGUI {
             if(CloseEvent != null) {
                 CloseEvent();
             }
+        }
+
+        private void connectButton_Click(object sender, EventArgs e)
+        {
+            connect();
         }
     }
 }

@@ -7,6 +7,7 @@ namespace SpreadsheetGUI {
     class SpreadsheetApplicationContext : ApplicationContext {
         // Number of open forms
         private int windowCount = 0;
+        private static Controller controller;
 
         // Singleton ApplicationContext
         private static SpreadsheetApplicationContext context;
@@ -33,7 +34,7 @@ namespace SpreadsheetGUI {
         public void RunNew() {
             // Create the window and the controller
             SpreadsheetGui window = new SpreadsheetGui();
-            new Controller(window);
+            controller = new Controller(window);
 
             // One more form is running
             windowCount++;
@@ -43,6 +44,11 @@ namespace SpreadsheetGUI {
 
             // Run the form
             window.Show();
+        }
+
+        public static Controller getController()
+        {
+            return controller;
         }
 
         /// <summary>

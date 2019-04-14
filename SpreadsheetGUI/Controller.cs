@@ -5,9 +5,34 @@ using System;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Net.Sockets;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Timers;
+using NetworkingController;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
-namespace SpreadsheetGUI {
-    public class Controller {
+namespace SpreadsheetGUI
+{
+    public class Controller
+    {
+        //  Private Properties
+        private static readonly object _lock = new object();
+        private bool ReceivedID;
+        private int PlayerID;
+        private string userName;
+        private Socket socket;
+
+        //  Public properties
+        public Form MyForm { get; set; }
+        public delegate string PlayerCommands();
+        readonly PlayerCommands Commands;
+
 
         private SpreadsheetView window;
 
@@ -17,7 +42,8 @@ namespace SpreadsheetGUI {
         /// Constructor contollor for when a new/blank spreadsheet is added.
         /// </summary>
         /// <param name="window"></param>
-        public Controller(SpreadsheetView window) {
+        public Controller(SpreadsheetView window)
+        {
             this.window = window;
             ssModule = new Spreadsheet(new Regex("^[a-zA-Z]{1}[1-9]{1}[0-9]?$"));
             window.NewEvent += HandleNew;
@@ -33,15 +59,18 @@ namespace SpreadsheetGUI {
         /// </summary>
         /// <param name="window"></param>
         /// <param name="filename"></param>
-        public Controller(SpreadsheetView window, String filename) : this(window) {
+        public Controller(SpreadsheetView window, String filename) : this(window)
+        {
 
             TextReader openfile = null;
-            try {
+            try
+            {
                 ssModule = new Spreadsheet(openfile = File.OpenText(filename), new Regex("^[a-zA-Z]{1}[1-9]{1}[0-9]?$"));
                 window.NewEvent += HandleNew;
                 DrawFromFile();
             }
-            catch {
+            catch
+            {
                 MessageBox.Show("Error occured when trying to open file.");
             }
         }
@@ -49,14 +78,16 @@ namespace SpreadsheetGUI {
         /// <summary>
         /// Handles a request to close the window
         /// </summary>
-        private void HandleClose() {
+        private void HandleClose()
+        {
             window.SetChanged(ssModule.Changed);
         }
 
         /// <summary>
         /// Handles a request to open a new window.
         /// </summary>
-        private void HandleNew() {
+        private void HandleNew()
+        {
             window.OpenNew();
         }
 
@@ -66,14 +97,17 @@ namespace SpreadsheetGUI {
         /// updates the textboxes for contents, name, and value.
         /// </summary>
         /// <param name="name"></param>
-        private void HandleChange(String name) {
+        private void HandleChange(String name)
+        {
             Object content = ssModule.GetCellContents(name);
             String convertContents;
 
-            if (content.GetType() == typeof(Formula)) {
+            if (content.GetType() == typeof(Formula))
+            {
                 convertContents = "=" + content.ToString();
             }
-            else {
+            else
+            {
                 convertContents = content.ToString();
             }
             window.UpdateContentBox(convertContents);
@@ -88,10 +122,12 @@ namespace SpreadsheetGUI {
         /// <param name="col"></param>
         /// <param name="row"></param>
         /// <param name="content"></param>
-        private void HandleUpdate(int col, int row, String content) {
+        private void HandleUpdate(int col, int row, String content)
+        {
 
             String name = window.GetName(col, row);
-            try {
+            try
+            {
                 ssModule.SetContentsOfCell(name, content);
 
                 window.UpdateErrorLabel(false, "");
@@ -99,7 +135,8 @@ namespace SpreadsheetGUI {
                 DrawFromFile();
                 HandleChange(name);
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
                 window.UpdateErrorLabel(true, "You have attempted to add a " + e.GetType().ToString() + " at " + name);
             }
 
@@ -108,7 +145,8 @@ namespace SpreadsheetGUI {
         /// <summary>
         /// Handles a request to open a file.
         /// </summary>
-        private void HandleFileChosen(String filename) {
+        private void HandleFileChosen(String filename)
+        {
             window.OpenExisting(filename);
         }
 
@@ -116,7 +154,8 @@ namespace SpreadsheetGUI {
         /// Saves the spreadsheet
         /// </summary>
         /// <param name="filename"></param>
-        private void HandleSave(String filename) {
+        private void HandleSave(String filename)
+        {
             TextWriter saveFile = null;
             ssModule.Save(saveFile = File.CreateText(filename));
             saveFile.Close();
@@ -125,10 +164,12 @@ namespace SpreadsheetGUI {
         /// <summary>
         /// Updates all cell values in spreasheet panel.
         /// </summary>
-        private void DrawFromFile() {
+        private void DrawFromFile()
+        {
 
             string temp = "";
-            foreach (String cell in ssModule.GetNamesOfAllNonemptyCells()) {
+            foreach (String cell in ssModule.GetNamesOfAllNonemptyCells())
+            {
                 temp += cell + ", ";
                 int col = cell[0] - 65;
                 int row = Convert.ToInt32(cell.Substring(1)) - 1;
@@ -136,5 +177,85 @@ namespace SpreadsheetGUI {
                 window.DrawCell(col, row, ssModule.GetCellValue(cell).ToString());
             }
         }
+
+        //
+        //Network interfacing beyond this point.
+        //
+
+        
+
+        /// <summary>
+        /// This method processes server messages, line by line, from a supplied SocketState's string buffer.
+        /// </summary>
+        /// <param name="ss"></param>
+        private void ProcessMessage(SocketState ss)
+        {
+            string totalData = ss.sb.ToString();
+            string[] parts = Regex.Split(totalData, @"(?<=[\n])");
+
+            // Loop until we have processed all messages.
+            lock (_lock)
+            {
+                foreach (string p in parts)
+                {
+                    // Ignore empty strings added by the regex splitter
+                    if (p.Length == 0)
+                    {
+                        ss.sb.Remove(0, p.Length);
+                        continue;
+                    }
+
+                    // The regex splitter will include the last string even if it doesn't end with a '\n',
+                    if (p[p.Length - 1] != '\n')
+                        break;
+
+                    JObject obj = JObject.Parse(p);
+                    //TODO Do something with string segment (populate spreadsheet or create master string to populate spreadsheet.)
+                    // Do we even need to parse individual lines? Maybe take every individual line and just make edit to SS as they come.
+
+                    // Then remove it from the SocketState's growable buffer
+                    ss.sb.Remove(0, p.Length);
+                }
+            }
+            try
+            {
+                MyForm.Invoke(new MethodInvoker(() => MyForm.Invalidate(true)));
+            }
+            //  When the window is closed, this throws an exception. Will now close more gracefully
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+
+        /// <summary>
+        /// Initializes connection from the View
+        /// </summary>
+        /// <param name="address">Where to find server</param>
+        /// <param name="username">The user's username</param>
+        /// <param name="password">The user's password</param>
+        /// <param name="spreadsheet">The user's requested spreadsheet</param>
+        /// <returns>True if connection is successful, false if not.</returns>
+        public bool StartConnection(string username, string password)
+        {
+            string address = ""; // TODO Hardcode AWS server IP.
+
+            //  Connect to Socket
+            try
+            {
+                //  Give network FirstContact so we can get our variables before reading more msgs
+                Network.ConnectToServer(address, username, password, ProcessMessage);
+            }
+            //  If failed, let View know
+            catch (Exception)
+            {
+                return false;
+            }
+            //  If no exceptions, no problem!
+            return true;
+        }
+
     }
 }
+
+
