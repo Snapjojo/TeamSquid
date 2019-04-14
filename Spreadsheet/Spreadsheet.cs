@@ -144,7 +144,7 @@ namespace SS {
             CheckName(name);
             name = name.ToUpper();
 
-            Cell requested = MakeCell(name);           
+            Cell requested = MakeCell(name);
 
             return requested.GetContents();
         }
@@ -160,7 +160,7 @@ namespace SS {
         /// <exception cref="InvalidNameException">If name is null or invalid</exception>
         public override object GetCellValue(string name) {
             CheckName(name);
-            return MakeCell(name).GetValue(); 
+            return MakeCell(name).GetValue();
         }
 
         /// <summary>
@@ -260,12 +260,12 @@ namespace SS {
                             }
 
                             //Try setting cell, if error occurs set SpreadsheetReadException
-                            try {      
+                            try {
                                 //Set cell contents with the name and content
                                 SetContentsOfCell(name, content);
                             } catch (Exception e) {
                                 throw new SS.SpreadsheetReadException("Error parsing contents to cell " + e);
-                            }       
+                            }
                             break;
                     }
                 }
@@ -338,7 +338,7 @@ namespace SS {
                 throw new IOException();
             }
         }
-    
+
 
         /// <summary>
         /// If name is null or invalid, throws an InvalidNameException.
@@ -380,7 +380,7 @@ namespace SS {
                 throw new ArgumentException();
             }
             SetCellAssist(name, text, text.GetType());
-            
+
             //Get cells that need to be recalculated
             ISet<String> cellsToRecalculate = new HashSet<String>(GetCellsToRecalculate(name));
 
@@ -417,7 +417,7 @@ namespace SS {
 
             //Passed Circular checks | Assign
             SetCellAssist(name, formula, formula.GetType());
-            
+
 
             //Check for circular reference
             foreach (String s in dependants) {
@@ -427,13 +427,13 @@ namespace SS {
                     MakeCell(name).SetContents(String.Empty);
                     throw new FormulaFormatException(s + " is not a valid variable");
                 }
-                
+
 
                 //Passed test add dependency
                 dg.AddDependency(s, name);
 
             }
-            
+
             //Get cells that need to be recalculated
             ISet<String> cellsToRecalculate = new HashSet<String>(GetCellsToRecalculate(name));
 
@@ -491,7 +491,7 @@ namespace SS {
             name = name.ToUpper();
 
             //Try to parse content as double
-            if(Double.TryParse(content, out double doubContent)) {
+            if (Double.TryParse(content, out double doubContent)) {
                 return SetCellContents(name, doubContent);
             }
 
@@ -499,13 +499,13 @@ namespace SS {
             //If begins with = then try to make formula
             if (content.Count() > 0 && content[0].Equals('=')) {
                 string f = content.Substring(1);
-                Formula form = new Formula(f , s=>s.ToUpper(), s=> isValid.IsMatch(s));
+                Formula form = new Formula(f, s => s.ToUpper(), s => isValid.IsMatch(s));
                 return SetCellContents(name, form);
             }
 
             //For a string
             return SetCellContents(name, content);
-            
+
         }
 
         /// <summary>
@@ -515,7 +515,7 @@ namespace SS {
         private void Recalculate(ISet<String> cellsToRecalculate) {
 
             //If any of these are a formula recalculate
-            foreach (String s in cellsToRecalculate) {              
+            foreach (String s in cellsToRecalculate) {
                 if (activeCells[s].GetContents().GetType() == typeof(Formula)) {
 
                     String tempContents = activeCells[s].GetContents().ToString();
@@ -581,7 +581,7 @@ namespace SS {
 
             name = name.ToUpper();
             MakeCell(name);
-            
+
             //If content is a double
             if (T == typeof(Double)) {
                 activeCells[name].SetValue(content);
@@ -603,7 +603,7 @@ namespace SS {
         }
 
         private void SetValue(String name, Formula form, Lookup lookup) {
-            
+
             try {
                 activeCells[name.ToUpper()].SetValue(form.Evaluate(lookup));
             } catch (Exception e) {
@@ -653,7 +653,7 @@ namespace SS {
         private void CheckCircular(string name, Stack<string> q, List<String> visited) {
             //If the queue is not empty
             while (q.Count > 0) {
-                
+
                 //If the value at the top of the queue matches name
                 //Circular reference was found
                 if (q.Peek().Equals(name)) {

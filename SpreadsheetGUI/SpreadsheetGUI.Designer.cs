@@ -35,6 +35,7 @@ namespace SpreadsheetGUI {
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.newSheetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fileDialog1 = new System.Windows.Forms.OpenFileDialog();
@@ -46,7 +47,8 @@ namespace SpreadsheetGUI {
             this.passwordLabel = new System.Windows.Forms.Label();
             this.passwordBox = new System.Windows.Forms.TextBox();
             this.connectButton = new System.Windows.Forms.Button();
-            this.newSheetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.undoBtn = new System.Windows.Forms.Button();
+            this.revertBtn = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -142,9 +144,9 @@ namespace SpreadsheetGUI {
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(43, 40);
             this.fileToolStripMenuItem.Text = "File";
-            this.fileToolStripMenuItem.DropDownClosed += new System.EventHandler(this.menuStrip1_EnabledChanged);
-            this.fileToolStripMenuItem.DropDownOpening += new System.EventHandler(this.fileToolStripMenuItem_Click);
-            this.fileToolStripMenuItem.Click += new System.EventHandler(this.fileToolStripMenuItem_Click);
+            this.fileToolStripMenuItem.DropDownClosed += new System.EventHandler(this.MenuStrip1_EnabledChanged);
+            this.fileToolStripMenuItem.DropDownOpening += new System.EventHandler(this.FileToolStripMenuItem_Click);
+            this.fileToolStripMenuItem.Click += new System.EventHandler(this.FileToolStripMenuItem_Click);
             // 
             // openItem
             // 
@@ -156,6 +158,12 @@ namespace SpreadsheetGUI {
             this.openItem.Text = "Open";
             this.openItem.Click += new System.EventHandler(this.OpenItem_Click);
             // 
+            // newSheetToolStripMenuItem
+            // 
+            this.newSheetToolStripMenuItem.Name = "newSheetToolStripMenuItem";
+            this.newSheetToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.newSheetToolStripMenuItem.Text = "New Sheet";
+            // 
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
@@ -165,17 +173,17 @@ namespace SpreadsheetGUI {
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             this.optionsToolStripMenuItem.Size = new System.Drawing.Size(72, 40);
             this.optionsToolStripMenuItem.Text = "Options";
-            this.optionsToolStripMenuItem.DropDownClosed += new System.EventHandler(this.menuStrip1_EnabledChanged);
-            this.optionsToolStripMenuItem.DropDownOpening += new System.EventHandler(this.optionsToolStripMenuItem_Click);
-            this.optionsToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
+            this.optionsToolStripMenuItem.DropDownClosed += new System.EventHandler(this.MenuStrip1_EnabledChanged);
+            this.optionsToolStripMenuItem.DropDownOpening += new System.EventHandler(this.OptionsToolStripMenuItem_Click);
+            this.optionsToolStripMenuItem.Click += new System.EventHandler(this.OptionsToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             this.helpToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F1;
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(131, 22);
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.helpToolStripMenuItem.Text = "Help";
-            this.helpToolStripMenuItem.Click += new System.EventHandler(this.helpToolStripMenuItem_Click);
+            this.helpToolStripMenuItem.Click += new System.EventHandler(this.HelpToolStripMenuItem_Click);
             // 
             // fileDialog1
             // 
@@ -196,7 +204,7 @@ namespace SpreadsheetGUI {
             this.spreadsheetPanel1.Name = "spreadsheetPanel1";
             this.spreadsheetPanel1.Size = new System.Drawing.Size(1008, 474);
             this.spreadsheetPanel1.TabIndex = 0;
-            this.spreadsheetPanel1.SelectionChanged += new SSGui.SelectionChangedHandler(this.spreadsheetPanel1_SelectionChanged);
+            this.spreadsheetPanel1.SelectionChanged += new SSGui.SelectionChangedHandler(this.SpreadsheetPanel1_SelectionChanged);
             this.spreadsheetPanel1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Spreadsheet_KeyDown);
             // 
             // ErrorLabel
@@ -221,6 +229,8 @@ namespace SpreadsheetGUI {
             // usernameLabel
             // 
             this.usernameLabel.AutoSize = true;
+            this.usernameLabel.BackColor = System.Drawing.Color.Gray;
+            this.usernameLabel.ForeColor = System.Drawing.Color.White;
             this.usernameLabel.Location = new System.Drawing.Point(191, 14);
             this.usernameLabel.Name = "usernameLabel";
             this.usernameLabel.Size = new System.Drawing.Size(55, 13);
@@ -230,18 +240,22 @@ namespace SpreadsheetGUI {
             // passwordLabel
             // 
             this.passwordLabel.AutoSize = true;
+            this.passwordLabel.BackColor = System.Drawing.Color.Gray;
+            this.passwordLabel.ForeColor = System.Drawing.Color.White;
             this.passwordLabel.Location = new System.Drawing.Point(358, 14);
             this.passwordLabel.Name = "passwordLabel";
-            this.passwordLabel.Size = new System.Drawing.Size(52, 13);
+            this.passwordLabel.Size = new System.Drawing.Size(53, 13);
             this.passwordLabel.TabIndex = 12;
-            this.passwordLabel.Text = "password";
+            this.passwordLabel.Text = "Password";
             // 
             // passwordBox
             // 
             this.passwordBox.Location = new System.Drawing.Point(416, 11);
             this.passwordBox.Name = "passwordBox";
+            this.passwordBox.PasswordChar = '*';
             this.passwordBox.Size = new System.Drawing.Size(100, 20);
             this.passwordBox.TabIndex = 13;
+            this.passwordBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.PasswordBox_KeyDown);
             // 
             // connectButton
             // 
@@ -251,19 +265,35 @@ namespace SpreadsheetGUI {
             this.connectButton.TabIndex = 14;
             this.connectButton.Text = "Connect";
             this.connectButton.UseVisualStyleBackColor = true;
-            this.connectButton.Click += new System.EventHandler(this.connectButton_Click);
+            this.connectButton.Click += new System.EventHandler(this.ConnectButton_Click);
             // 
-            // newSheetToolStripMenuItem
+            // undoBtn
             // 
-            this.newSheetToolStripMenuItem.Name = "newSheetToolStripMenuItem";
-            this.newSheetToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.newSheetToolStripMenuItem.Text = "New Sheet";
+            this.undoBtn.Location = new System.Drawing.Point(619, 565);
+            this.undoBtn.Name = "undoBtn";
+            this.undoBtn.Size = new System.Drawing.Size(75, 23);
+            this.undoBtn.TabIndex = 15;
+            this.undoBtn.Text = "Undo";
+            this.undoBtn.UseVisualStyleBackColor = true;
+            this.undoBtn.Click += new System.EventHandler(this.UndoBtn_Click);
+            // 
+            // revertBtn
+            // 
+            this.revertBtn.Location = new System.Drawing.Point(731, 565);
+            this.revertBtn.Name = "revertBtn";
+            this.revertBtn.Size = new System.Drawing.Size(83, 23);
+            this.revertBtn.TabIndex = 16;
+            this.revertBtn.Text = "Revert";
+            this.revertBtn.UseVisualStyleBackColor = true;
+            this.revertBtn.Click += new System.EventHandler(this.RevertBtn_Click);
             // 
             // SpreadsheetGui
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1008, 603);
+            this.Controls.Add(this.revertBtn);
+            this.Controls.Add(this.undoBtn);
             this.Controls.Add(this.connectButton);
             this.Controls.Add(this.passwordBox);
             this.Controls.Add(this.passwordLabel);
@@ -319,6 +349,8 @@ namespace SpreadsheetGUI {
         private TextBox passwordBox;
         private Button connectButton;
         private ToolStripMenuItem newSheetToolStripMenuItem;
+        private Button undoBtn;
+        private Button revertBtn;
     }
 }
 

@@ -16,20 +16,17 @@ using System.Collections.Generic;
 using Formulas;
 using System.IO;
 
-namespace SS
-{
+namespace SS {
     /// <summary>
     /// Thrown to indicate that a change to a cell will cause a circular dependency.
     /// </summary>
-    public class CircularException : Exception
-    {
+    public class CircularException : Exception {
     }
 
     /// <summary>
     /// Thrown to indicate that a name parameter was either null or invalid.
     /// </summary>
-    public class InvalidNameException : Exception
-    {
+    public class InvalidNameException : Exception {
     }
 
     // ADDED FOR PS6
@@ -37,14 +34,12 @@ namespace SS
     /// Thrown to indicate that a saved spreadsheet could not be read
     /// because of a formatting problem.
     /// </summary>
-    public class SpreadsheetReadException : Exception
-    {
+    public class SpreadsheetReadException : Exception {
         /// <summary>
         /// Creates the exception with a message
         /// </summary>
         public SpreadsheetReadException(string msg)
-            : base(msg)
-        {
+            : base(msg) {
         }
     }
 
@@ -53,28 +48,24 @@ namespace SS
     /// Thrown to indicate that a saved spreadsheet could not be read
     /// because of a versioning problem.
     /// </summary>
-    public class SpreadsheetVersionException : Exception
-    {
+    public class SpreadsheetVersionException : Exception {
         /// <summary>
         /// Creates the exception with a message
         /// </summary>
         public SpreadsheetVersionException(string msg)
-            : base(msg)
-        {
+            : base(msg) {
         }
     }
 
     /// <summary>
     /// A possible value of a cell.
     /// </summary>
-    public struct FormulaError
-    {
+    public struct FormulaError {
         /// <summary>
         /// Constructs a FormulaError containing the explanatory reason.
         /// </summary>
         public FormulaError(String reason)
-            : this()
-        {
+            : this() {
             Reason = reason;
         }
 
@@ -137,8 +128,7 @@ namespace SS
     /// A1 depends on B1, which depends on C1, which depends on A1.  That's a circular
     /// dependency.
     /// </summary>
-    public abstract class AbstractSpreadsheet
-    {
+    public abstract class AbstractSpreadsheet {
         // ADDED FOR PS6
         /// <summary>
         /// True if this spreadsheet has been modified since it was created or saved
@@ -315,14 +305,11 @@ namespace SS
         /// IT WON'T WORK UNTIL GetDirectDependents IS IMPLEMENTED CORRECTLY.  YOU WILL
         /// NOT NEED TO MODIFY THIS METHOD.
         /// </summary>
-        protected IEnumerable<String> GetCellsToRecalculate(ISet<String> names)
-        {
+        protected IEnumerable<String> GetCellsToRecalculate(ISet<String> names) {
             LinkedList<String> changed = new LinkedList<String>();
             HashSet<String> visited = new HashSet<String>();
-            foreach (String name in names)
-            {
-                if (!visited.Contains(name))
-                {
+            foreach (String name in names) {
+                if (!visited.Contains(name)) {
                     Visit(name, name, visited, changed);
                 }
             }
@@ -333,25 +320,19 @@ namespace SS
         /// A convenience method for invoking the other version of GetCellsToRecalculate
         /// with a singleton set of names.  See the other version for details.
         /// </summary>
-        protected IEnumerable<String> GetCellsToRecalculate(String name)
-        {
+        protected IEnumerable<String> GetCellsToRecalculate(String name) {
             return GetCellsToRecalculate(new HashSet<String>() { name });
         }
 
         /// <summary>
         /// A helper for the GetCellsToRecalculate method.
         /// </summary>
-        private void Visit(String start, String name, ISet<String> visited, LinkedList<String> changed)
-        {
+        private void Visit(String start, String name, ISet<String> visited, LinkedList<String> changed) {
             visited.Add(name);
-            foreach (String n in GetDirectDependents(name))
-            {
-                if (n.Equals(start))
-                {
+            foreach (String n in GetDirectDependents(name)) {
+                if (n.Equals(start)) {
                     throw new CircularException();
-                }
-                else if (!visited.Contains(n))
-                {
+                } else if (!visited.Contains(n)) {
                     Visit(start, n, visited, changed);
                 }
             }
