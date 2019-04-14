@@ -238,7 +238,7 @@ namespace SpreadsheetGUI
         /// <returns>True if connection is successful, false if not.</returns>
         public bool StartConnection(string username, string password)
         {
-            string address = ""; // TODO Hardcode AWS server IP.
+            string address = ""; // TODO Hardcode AWS server IP. 
 
             //  Connect to Socket
             try
