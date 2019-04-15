@@ -59,7 +59,7 @@ namespace SpreadsheetGUI {
         /// <param name="e"></param>
         private void Spreadsheet_Load(object sender, EventArgs e) {
             spreadsheetPanel1.SetSelection(0, 0);
-            spreadsheetPanel1_SelectionChanged(spreadsheetPanel1);
+            SpreadsheetPanel1_SelectionChanged(spreadsheetPanel1);
             ErrorLabel.Visible = false;
             controller = SpreadsheetApplicationContext.getController();
         }
@@ -73,7 +73,7 @@ namespace SpreadsheetGUI {
             if (e.KeyCode == Keys.Left || e.KeyCode == Keys.Right
                     || e.KeyCode == Keys.Up || e.KeyCode == Keys.Down) {
                 ArrowKeys(e);
-                spreadsheetPanel1_SelectionChanged(spreadsheetPanel1);
+                SpreadsheetPanel1_SelectionChanged(spreadsheetPanel1);
             }
         }
 
@@ -111,7 +111,10 @@ namespace SpreadsheetGUI {
             }
         }
 
-        private void connect() {
+        /// <summary>
+        /// Initiates connection to the server
+        /// </summary>
+        private void Connect() {
             //TODO GENERATE List of spreadsheets in open dropdown.
 
             //Ensure server &name fields are filled out
@@ -183,7 +186,7 @@ namespace SpreadsheetGUI {
         /// Content Boxes.
         /// </summary>
         /// <param name="sender"></param>
-        private void spreadsheetPanel1_SelectionChanged(SpreadsheetPanel sender) {
+        private void SpreadsheetPanel1_SelectionChanged(SpreadsheetPanel sender) {
             if (SelectionEvent != null) {
                 int row, col;
                 spreadsheetPanel1.GetSelection(out col, out row);
@@ -217,7 +220,7 @@ namespace SpreadsheetGUI {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void helpToolStripMenuItem_Click(object sender, EventArgs e) {
+        private void HelpToolStripMenuItem_Click(object sender, EventArgs e) {
             SpreadsheetApplicationContext.GetContext().OpenHelp();
         }
 
@@ -286,7 +289,7 @@ namespace SpreadsheetGUI {
         }
 
         /// <summary>
-        /// Updates text in VlaueBox
+        /// Updates text in ValueBox
         /// </summary>
         /// <param name="value"></param>
         public void UpdateValueBox(string value) {
@@ -312,7 +315,7 @@ namespace SpreadsheetGUI {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void fileToolStripMenuItem_Click(object sender, EventArgs e) {
+        private void FileToolStripMenuItem_Click(object sender, EventArgs e) {
             if (fileToolStripMenuItem.Enabled) {
                 fileToolStripMenuItem.ForeColor = Color.FromArgb(49, 52, 62);
                 optionsToolStripMenuItem.ForeColor = Color.White;
@@ -327,7 +330,7 @@ namespace SpreadsheetGUI {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void optionsToolStripMenuItem_Click(object sender, EventArgs e) {
+        private void OptionsToolStripMenuItem_Click(object sender, EventArgs e) {
             if (fileToolStripMenuItem.Enabled) {
                 optionsToolStripMenuItem.ForeColor = Color.FromArgb(49, 52, 62);
                 fileToolStripMenuItem.ForeColor = Color.White;
@@ -342,7 +345,7 @@ namespace SpreadsheetGUI {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void menuStrip1_EnabledChanged(object sender, EventArgs e) {
+        private void MenuStrip1_EnabledChanged(object sender, EventArgs e) {
             optionsToolStripMenuItem.ForeColor = Color.White;
             fileToolStripMenuItem.ForeColor = Color.White;
         }
@@ -377,9 +380,50 @@ namespace SpreadsheetGUI {
             }
         }
 
-        private void connectButton_Click(object sender, EventArgs e)
+        /// <summary>
+        /// Connects to server when button is clicked.
+        /// </summary>
+        private void ConnectButton_Click(object sender, EventArgs e)
         {
-            connect();
+            Connect();
+        }
+
+
+        /// <summary>
+        /// Tries connecting when enter key is pressed when password is entered.
+        /// </summary>
+        private void PasswordBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                Connect();
+            }
+           
+        }
+
+        /// <summary>
+        /// The undo message type requests the most recent global change be returned to its previous
+        /// state.This message should only include the type field "undo". The undo message type will
+        ///rollback changes made by the "revert" message type.Multiple undo messages sequentially
+        ///will continue to return the spreadsheet to past states, all the way up to the spreadsheet's
+        ///state upon creation.
+        /// </summary>
+        private void UndoBtn_Click(object sender, EventArgs e)
+        {
+            //TODO: send undo request
+        }
+
+        /// <summary>
+        /// The revert message type requests the most recent global change of a given cell be returned
+        ///to its previous state.This message should include the type field “revert” as well as the cell
+        ///to have its contents returned to the previous state.The server should perform a circular
+        ///dependency check upon receiving a revert message, sending an error code upon finding
+        ///one.Multiple revert messages sequentially will continue to return the cell to past states, all
+        ///the way up to the cell's state upon creation of the spreadsheet.
+        /// </summary>
+        private void RevertBtn_Click(object sender, EventArgs e)
+        {
+            //TODO: send revert request
         }
     }
 }

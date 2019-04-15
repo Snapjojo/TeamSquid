@@ -79,7 +79,7 @@ namespace Dependencies {
             cellDict = new Dictionary<string, Cell>();
 
             foreach (String s in dg.GetCells().Keys.ToList<String>()) {
-                foreach(String t in dg.GetDependents(s)) {
+                foreach (String t in dg.GetDependents(s)) {
                     AddDependency(s, t);
                 }
             }
@@ -137,7 +137,7 @@ namespace Dependencies {
         /// <exception cref="System.ArgumentNullException">If parameter is null</exception>
         public bool HasDependees(string s) {
             if (s != null) {
-                
+
                 foreach (KeyValuePair<String, Cell> c in cellDict) {
                     if (c.Value.getDep().ContainsKey(s)) {
                         return true;
@@ -177,14 +177,13 @@ namespace Dependencies {
 
             if (s != null) {
 
-
                 foreach (KeyValuePair<String, Cell> c in cellDict) {
                     Cell tempcell;
 
                     if (c.Value.getDep().TryGetValue(s, out tempcell)) {
-                      yield return c.Value.GetName();
+                        yield return c.Value.GetName();
                     }
-                }    
+                }
             } else {
                 throw new ArgumentNullException("String s cannot be null");
             }
@@ -199,13 +198,11 @@ namespace Dependencies {
         public void AddDependency(string s, string t) {
             if (s != null & t != null) {
 
-                
-
                 //create cell
-                if(!this.cellDict.TryGetValue(s, out Cell tempCell)) {
+                if (!this.cellDict.TryGetValue(s, out Cell tempCell)) {
                     tempCell = new Cell(s);
                 }
-                
+
                 //tempcell
                 if (!cellDict.TryGetValue(s, out Cell dependent)) {
                     dependent = new Cell(s);
@@ -218,7 +215,7 @@ namespace Dependencies {
                     if (!cellDict.ContainsKey(s)) {
                         cellDict.Add(s, tempCell);
                     }
-                    
+
                 }
             } else {
                 throw new ArgumentNullException("String s and t cannot be null");
