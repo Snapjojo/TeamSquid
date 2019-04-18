@@ -192,7 +192,7 @@ namespace SpreadsheetGUI {
                 spreadsheetPanel1.GetSelection(out col, out row);
                 SelectionEvent(GetName(col, row));
                 ContentBox.Select();
-                ContentBox.SelectionStart = 0;
+               ContentBox.SelectionStart = 0;
                 ContentBox.SelectionLength = ContentBox.Text.Length;
             }
         }
@@ -424,6 +424,19 @@ namespace SpreadsheetGUI {
         private void RevertBtn_Click(object sender, EventArgs e)
         {
             //TODO: send revert request
+        }
+
+        /// <summary>
+        /// This method updates the text in the cells as their being typed in the content box.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ContentBox_TextChanged(object sender, EventArgs e) {
+            //Update Cell in real time
+            int row, col;
+            spreadsheetPanel1.GetSelection(out col, out row);
+            UpdateEvent(col, row, ContentBox.Text);
+
         }
     }
 }

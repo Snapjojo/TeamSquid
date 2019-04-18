@@ -61,6 +61,7 @@ namespace SpreadsheetGUI {
             this.ContentBox.Name = "ContentBox";
             this.ContentBox.Size = new System.Drawing.Size(875, 26);
             this.ContentBox.TabIndex = 1;
+            this.ContentBox.TextChanged += new System.EventHandler(this.ContentBox_TextChanged);
             this.ContentBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ContentBox_KeyDown);
             // 
             // ContentLabel
@@ -154,7 +155,7 @@ namespace SpreadsheetGUI {
             this.newSheetToolStripMenuItem});
             this.openItem.Name = "openItem";
             this.openItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.openItem.Size = new System.Drawing.Size(180, 22);
+            this.openItem.Size = new System.Drawing.Size(164, 22);
             this.openItem.Text = "Open";
             this.openItem.Click += new System.EventHandler(this.OpenItem_Click);
             // 
@@ -181,7 +182,7 @@ namespace SpreadsheetGUI {
             // 
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             this.helpToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F1;
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(131, 22);
             this.helpToolStripMenuItem.Text = "Help";
             this.helpToolStripMenuItem.Click += new System.EventHandler(this.HelpToolStripMenuItem_Click);
             // 
@@ -198,6 +199,7 @@ namespace SpreadsheetGUI {
             this.spreadsheetPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.spreadsheetPanel1.AutoValidate = System.Windows.Forms.AutoValidate.EnablePreventFocusChange;
             this.spreadsheetPanel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(18)))), ((int)(((byte)(69)))), ((int)(((byte)(90)))));
+            this.spreadsheetPanel1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.spreadsheetPanel1.Location = new System.Drawing.Point(0, 40);
             this.spreadsheetPanel1.Margin = new System.Windows.Forms.Padding(6);
             this.spreadsheetPanel1.MinimumSize = new System.Drawing.Size(300, 300);
