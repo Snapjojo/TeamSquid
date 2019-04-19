@@ -43,7 +43,7 @@ namespace NetworkingController {
             //  Start up the socket
             socket.BeginConnect(ipAddress, port, ConnectedCallback, ss);
 
-            //  Follow through with FirstContact, which will start a continuous loop
+            //  Follow through with ProcessMessage, which will start a continuous loop
             _call(ss);
         }
 
