@@ -28,7 +28,7 @@ namespace NetworkingController {
         /// Start attempting to connect to a server
         /// </summary>
         /// <param name="ip">The address of the server</param>
-        public static void ConnectToServer(string hostName, string username, string password, NetworkAction _call) {
+        public static void ConnectToServer(string hostName, string username, string password, NetworkAction _firstContact, NetworkAction _processMessage) {
             System.Diagnostics.Debug.WriteLine("connecting  to " + hostName);
 
             // Create a TCP/IP socket, then add it to a new SocketState
@@ -38,13 +38,13 @@ namespace NetworkingController {
             SocketState ss = new SocketState(socket);
 
             //  Save the ProcessMessage method
-            ss.callMe = _call;
+            ss.callMe = _processMessage;
 
             //  Start up the socket
             socket.BeginConnect(ipAddress, port, ConnectedCallback, ss);
 
-            //  Follow through with ProcessMessage, which will start a continuous loop
-            _call(ss);
+            //  Follow through with FirstContact method, which will start a continuous loop
+            _firstContact(ss);
         }
 
         /// <summary>

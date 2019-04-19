@@ -182,7 +182,41 @@ namespace SpreadsheetGUI
         //Network interfacing beyond this point.
         //
 
-        
+
+        /// <summary>
+        /// This method processes the initial handshake with the server.
+        /// </summary>
+        /// <param name="ss"></param>
+        private void FirstContact(SocketState ss)
+        {
+            // Save the newly-created socket
+            socket = ss.theSocket;
+
+            //  Wait for the connection to be finished (avg time is 20 ms)
+            int time = 5;
+            int counter = 0;
+
+            //  Put thread to sleep in small increments until the socket is connected
+            while (!socket.Connected)
+            {
+                Thread.Sleep(time);
+                counter += time;
+                //  If we've been waiting for longer than 5 seconds, give up
+                if (counter >= 5000)
+                {
+                    throw new Exception("Could not connect to the server after 5 seconds!");
+                }
+            }
+
+            //  Let the server speak to us
+            Network.GetData(ss);
+
+            // TODO Handle initial connectivity protocol
+           
+            //Set the callback to be our processMessage method.
+            ss.callMe = ProcessMessage;
+        }
+
 
         /// <summary>
         /// This method processes server messages, line by line, from a supplied SocketState's string buffer.
@@ -219,7 +253,7 @@ namespace SpreadsheetGUI
             }
             try
             {
-                MyForm.Invoke(new MethodInvoker(() => MyForm.Invalidate(true)));
+                MyForm.Invoke(new MethodInvoker(() => MyForm.Invalidate(true))); //TODO Validate necessity
             }
             //  When the window is closed, this throws an exception. Will now close more gracefully
             catch (Exception e)
@@ -244,7 +278,7 @@ namespace SpreadsheetGUI
             try
             {
                 //  Give network FirstContact so we can get our variables before reading more msgs
-                Network.ConnectToServer(address, username, password, ProcessMessage);
+                Network.ConnectToServer(address, username, password, FirstContact, ProcessMessage);
             }
             //  If failed, let View know
             catch (Exception)
