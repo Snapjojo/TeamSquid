@@ -42,11 +42,6 @@ namespace SpreadsheetGUI {
             this.spreadsheetPanel1 = new SSGui.SpreadsheetPanel();
             this.ErrorLabel = new System.Windows.Forms.Label();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.usernameBox = new System.Windows.Forms.TextBox();
-            this.usernameLabel = new System.Windows.Forms.Label();
-            this.passwordLabel = new System.Windows.Forms.Label();
-            this.passwordBox = new System.Windows.Forms.TextBox();
-            this.connectButton = new System.Windows.Forms.Button();
             this.undoBtn = new System.Windows.Forms.Button();
             this.revertBtn = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
@@ -57,9 +52,10 @@ namespace SpreadsheetGUI {
             this.ContentBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.ContentBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ContentBox.Location = new System.Drawing.Point(121, 523);
+            this.ContentBox.Location = new System.Drawing.Point(161, 644);
+            this.ContentBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.ContentBox.Name = "ContentBox";
-            this.ContentBox.Size = new System.Drawing.Size(875, 26);
+            this.ContentBox.Size = new System.Drawing.Size(1165, 30);
             this.ContentBox.TabIndex = 1;
             this.ContentBox.TextChanged += new System.EventHandler(this.ContentBox_TextChanged);
             this.ContentBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ContentBox_KeyDown);
@@ -69,9 +65,10 @@ namespace SpreadsheetGUI {
             this.ContentLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.ContentLabel.AutoSize = true;
             this.ContentLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ContentLabel.Location = new System.Drawing.Point(19, 526);
+            this.ContentLabel.Location = new System.Drawing.Point(25, 647);
+            this.ContentLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.ContentLabel.Name = "ContentLabel";
-            this.ContentLabel.Size = new System.Drawing.Size(96, 20);
+            this.ContentLabel.Size = new System.Drawing.Size(120, 25);
             this.ContentLabel.TabIndex = 2;
             this.ContentLabel.Text = "Cell Content";
             // 
@@ -80,9 +77,10 @@ namespace SpreadsheetGUI {
             this.NameLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.NameLabel.AutoSize = true;
             this.NameLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.NameLabel.Location = new System.Drawing.Point(19, 562);
+            this.NameLabel.Location = new System.Drawing.Point(25, 692);
+            this.NameLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.NameLabel.Name = "NameLabel";
-            this.NameLabel.Size = new System.Drawing.Size(81, 20);
+            this.NameLabel.Size = new System.Drawing.Size(103, 25);
             this.NameLabel.TabIndex = 4;
             this.NameLabel.Text = "Cell Name";
             // 
@@ -91,10 +89,11 @@ namespace SpreadsheetGUI {
             this.NameBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.NameBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.NameBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(153)))), ((int)(((byte)(253)))));
-            this.NameBox.Location = new System.Drawing.Point(121, 562);
+            this.NameBox.Location = new System.Drawing.Point(161, 692);
+            this.NameBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.NameBox.Name = "NameBox";
             this.NameBox.ReadOnly = true;
-            this.NameBox.Size = new System.Drawing.Size(139, 26);
+            this.NameBox.Size = new System.Drawing.Size(184, 30);
             this.NameBox.TabIndex = 5;
             // 
             // ValueLabel
@@ -102,9 +101,10 @@ namespace SpreadsheetGUI {
             this.ValueLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.ValueLabel.AutoSize = true;
             this.ValueLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ValueLabel.Location = new System.Drawing.Point(273, 562);
+            this.ValueLabel.Location = new System.Drawing.Point(364, 692);
+            this.ValueLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.ValueLabel.Name = "ValueLabel";
-            this.ValueLabel.Size = new System.Drawing.Size(80, 20);
+            this.ValueLabel.Size = new System.Drawing.Size(102, 25);
             this.ValueLabel.TabIndex = 6;
             this.ValueLabel.Text = "Cell Value";
             // 
@@ -113,10 +113,11 @@ namespace SpreadsheetGUI {
             this.ValueBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.ValueBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ValueBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(153)))), ((int)(((byte)(253)))));
-            this.ValueBox.Location = new System.Drawing.Point(363, 562);
+            this.ValueBox.Location = new System.Drawing.Point(484, 692);
+            this.ValueBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.ValueBox.Name = "ValueBox";
             this.ValueBox.ReadOnly = true;
-            this.ValueBox.Size = new System.Drawing.Size(132, 26);
+            this.ValueBox.Size = new System.Drawing.Size(175, 30);
             this.ValueBox.TabIndex = 7;
             // 
             // menuStrip1
@@ -129,10 +130,10 @@ namespace SpreadsheetGUI {
             this.fileToolStripMenuItem,
             this.optionsToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip1.MinimumSize = new System.Drawing.Size(0, 40);
+            this.menuStrip1.MinimumSize = new System.Drawing.Size(0, 49);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Padding = new System.Windows.Forms.Padding(6, 0, 0, 0);
-            this.menuStrip1.Size = new System.Drawing.Size(1008, 40);
+            this.menuStrip1.Padding = new System.Windows.Forms.Padding(8, 0, 0, 0);
+            this.menuStrip1.Size = new System.Drawing.Size(1344, 49);
             this.menuStrip1.Stretch = false;
             this.menuStrip1.TabIndex = 8;
             this.menuStrip1.Text = "menuStrip1";
@@ -143,7 +144,7 @@ namespace SpreadsheetGUI {
             this.openItem});
             this.fileToolStripMenuItem.ForeColor = System.Drawing.Color.White;
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(43, 40);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(53, 49);
             this.fileToolStripMenuItem.Text = "File";
             this.fileToolStripMenuItem.DropDownClosed += new System.EventHandler(this.MenuStrip1_EnabledChanged);
             this.fileToolStripMenuItem.DropDownOpening += new System.EventHandler(this.FileToolStripMenuItem_Click);
@@ -155,14 +156,14 @@ namespace SpreadsheetGUI {
             this.newSheetToolStripMenuItem});
             this.openItem.Name = "openItem";
             this.openItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.openItem.Size = new System.Drawing.Size(164, 22);
+            this.openItem.Size = new System.Drawing.Size(197, 28);
             this.openItem.Text = "Open";
             this.openItem.Click += new System.EventHandler(this.OpenItem_Click);
             // 
             // newSheetToolStripMenuItem
             // 
             this.newSheetToolStripMenuItem.Name = "newSheetToolStripMenuItem";
-            this.newSheetToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.newSheetToolStripMenuItem.Size = new System.Drawing.Size(179, 28);
             this.newSheetToolStripMenuItem.Text = "New Sheet";
             // 
             // optionsToolStripMenuItem
@@ -172,7 +173,7 @@ namespace SpreadsheetGUI {
             this.helpToolStripMenuItem});
             this.optionsToolStripMenuItem.ForeColor = System.Drawing.Color.White;
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(72, 40);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(87, 49);
             this.optionsToolStripMenuItem.Text = "Options";
             this.optionsToolStripMenuItem.DropDownClosed += new System.EventHandler(this.MenuStrip1_EnabledChanged);
             this.optionsToolStripMenuItem.DropDownOpening += new System.EventHandler(this.OptionsToolStripMenuItem_Click);
@@ -182,7 +183,7 @@ namespace SpreadsheetGUI {
             // 
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             this.helpToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F1;
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(131, 22);
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(158, 28);
             this.helpToolStripMenuItem.Text = "Help";
             this.helpToolStripMenuItem.Click += new System.EventHandler(this.HelpToolStripMenuItem_Click);
             // 
@@ -200,11 +201,11 @@ namespace SpreadsheetGUI {
             this.spreadsheetPanel1.AutoValidate = System.Windows.Forms.AutoValidate.EnablePreventFocusChange;
             this.spreadsheetPanel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(18)))), ((int)(((byte)(69)))), ((int)(((byte)(90)))));
             this.spreadsheetPanel1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.spreadsheetPanel1.Location = new System.Drawing.Point(0, 40);
-            this.spreadsheetPanel1.Margin = new System.Windows.Forms.Padding(6);
-            this.spreadsheetPanel1.MinimumSize = new System.Drawing.Size(300, 300);
+            this.spreadsheetPanel1.Location = new System.Drawing.Point(0, 49);
+            this.spreadsheetPanel1.Margin = new System.Windows.Forms.Padding(8, 7, 8, 7);
+            this.spreadsheetPanel1.MinimumSize = new System.Drawing.Size(400, 369);
             this.spreadsheetPanel1.Name = "spreadsheetPanel1";
-            this.spreadsheetPanel1.Size = new System.Drawing.Size(1008, 474);
+            this.spreadsheetPanel1.Size = new System.Drawing.Size(1344, 583);
             this.spreadsheetPanel1.TabIndex = 0;
             this.spreadsheetPanel1.SelectionChanged += new SSGui.SelectionChangedHandler(this.SpreadsheetPanel1_SelectionChanged);
             this.spreadsheetPanel1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Spreadsheet_KeyDown);
@@ -215,65 +216,19 @@ namespace SpreadsheetGUI {
             this.ErrorLabel.AutoSize = true;
             this.ErrorLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ErrorLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(247)))), ((int)(((byte)(1)))), ((int)(((byte)(65)))));
-            this.ErrorLabel.Location = new System.Drawing.Point(503, 562);
+            this.ErrorLabel.Location = new System.Drawing.Point(671, 692);
+            this.ErrorLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.ErrorLabel.Name = "ErrorLabel";
-            this.ErrorLabel.Size = new System.Drawing.Size(44, 20);
+            this.ErrorLabel.Size = new System.Drawing.Size(54, 25);
             this.ErrorLabel.TabIndex = 9;
             this.ErrorLabel.Text = "Error";
             // 
-            // usernameBox
-            // 
-            this.usernameBox.Location = new System.Drawing.Point(252, 11);
-            this.usernameBox.Name = "usernameBox";
-            this.usernameBox.Size = new System.Drawing.Size(100, 20);
-            this.usernameBox.TabIndex = 10;
-            // 
-            // usernameLabel
-            // 
-            this.usernameLabel.AutoSize = true;
-            this.usernameLabel.BackColor = System.Drawing.Color.Gray;
-            this.usernameLabel.ForeColor = System.Drawing.Color.White;
-            this.usernameLabel.Location = new System.Drawing.Point(191, 14);
-            this.usernameLabel.Name = "usernameLabel";
-            this.usernameLabel.Size = new System.Drawing.Size(55, 13);
-            this.usernameLabel.TabIndex = 11;
-            this.usernameLabel.Text = "Username";
-            // 
-            // passwordLabel
-            // 
-            this.passwordLabel.AutoSize = true;
-            this.passwordLabel.BackColor = System.Drawing.Color.Gray;
-            this.passwordLabel.ForeColor = System.Drawing.Color.White;
-            this.passwordLabel.Location = new System.Drawing.Point(358, 14);
-            this.passwordLabel.Name = "passwordLabel";
-            this.passwordLabel.Size = new System.Drawing.Size(53, 13);
-            this.passwordLabel.TabIndex = 12;
-            this.passwordLabel.Text = "Password";
-            // 
-            // passwordBox
-            // 
-            this.passwordBox.Location = new System.Drawing.Point(416, 11);
-            this.passwordBox.Name = "passwordBox";
-            this.passwordBox.PasswordChar = '*';
-            this.passwordBox.Size = new System.Drawing.Size(100, 20);
-            this.passwordBox.TabIndex = 13;
-            this.passwordBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.PasswordBox_KeyDown);
-            // 
-            // connectButton
-            // 
-            this.connectButton.Location = new System.Drawing.Point(526, 11);
-            this.connectButton.Name = "connectButton";
-            this.connectButton.Size = new System.Drawing.Size(75, 23);
-            this.connectButton.TabIndex = 14;
-            this.connectButton.Text = "Connect";
-            this.connectButton.UseVisualStyleBackColor = true;
-            this.connectButton.Click += new System.EventHandler(this.ConnectButton_Click);
-            // 
             // undoBtn
             // 
-            this.undoBtn.Location = new System.Drawing.Point(619, 565);
+            this.undoBtn.Location = new System.Drawing.Point(825, 695);
+            this.undoBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.undoBtn.Name = "undoBtn";
-            this.undoBtn.Size = new System.Drawing.Size(75, 23);
+            this.undoBtn.Size = new System.Drawing.Size(100, 28);
             this.undoBtn.TabIndex = 15;
             this.undoBtn.Text = "Undo";
             this.undoBtn.UseVisualStyleBackColor = true;
@@ -281,9 +236,10 @@ namespace SpreadsheetGUI {
             // 
             // revertBtn
             // 
-            this.revertBtn.Location = new System.Drawing.Point(731, 565);
+            this.revertBtn.Location = new System.Drawing.Point(975, 695);
+            this.revertBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.revertBtn.Name = "revertBtn";
-            this.revertBtn.Size = new System.Drawing.Size(83, 23);
+            this.revertBtn.Size = new System.Drawing.Size(111, 28);
             this.revertBtn.TabIndex = 16;
             this.revertBtn.Text = "Revert";
             this.revertBtn.UseVisualStyleBackColor = true;
@@ -291,16 +247,11 @@ namespace SpreadsheetGUI {
             // 
             // SpreadsheetGui
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1008, 603);
+            this.ClientSize = new System.Drawing.Size(1344, 742);
             this.Controls.Add(this.revertBtn);
             this.Controls.Add(this.undoBtn);
-            this.Controls.Add(this.connectButton);
-            this.Controls.Add(this.passwordBox);
-            this.Controls.Add(this.passwordLabel);
-            this.Controls.Add(this.usernameLabel);
-            this.Controls.Add(this.usernameBox);
             this.Controls.Add(this.ErrorLabel);
             this.Controls.Add(this.ValueBox);
             this.Controls.Add(this.ValueLabel);
@@ -312,7 +263,8 @@ namespace SpreadsheetGUI {
             this.Controls.Add(this.menuStrip1);
             this.KeyPreview = true;
             this.MainMenuStrip = this.menuStrip1;
-            this.MinimumSize = new System.Drawing.Size(595, 558);
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.MinimumSize = new System.Drawing.Size(787, 676);
             this.Name = "SpreadsheetGui";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Spreadsheet";
@@ -345,11 +297,6 @@ namespace SpreadsheetGUI {
         private OpenFileDialog fileDialog1;
         private Label ErrorLabel;
         private SaveFileDialog saveFileDialog1;
-        private TextBox usernameBox;
-        private Label usernameLabel;
-        private Label passwordLabel;
-        private TextBox passwordBox;
-        private Button connectButton;
         private ToolStripMenuItem newSheetToolStripMenuItem;
         private Button undoBtn;
         private Button revertBtn;

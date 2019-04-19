@@ -8,11 +8,29 @@ using System.Windows.Forms;
 namespace SpreadsheetGUI {
     public partial class SpreadsheetGui : Form, SpreadsheetView {
         private Controller controller;
-
+        private LoginForm login_form;
         /// <summary>
         /// Intializes Spreadsheet
         /// </summary>
         public SpreadsheetGui() {
+            login_form = new LoginForm(Login, StartApp);
+            Application.Run(login_form);
+        }
+
+        public bool Login(string server, string user, string pssw)
+        {
+            controller = new Controller(this);
+            if (controller.StartConnection(server, user, pssw))
+            {
+                controller.MyForm = this;
+                return true;
+            }
+            return false;
+        }
+
+        public void StartApp()
+        {
+            login_form.Close();
             InitializeComponent();
         }
 
@@ -108,42 +126,6 @@ namespace SpreadsheetGUI {
                 if (FileChosenEvent != null) {
                     FileChosenEvent(fileDialog1.FileName);
                 }
-            }
-        }
-
-        /// <summary>
-        /// Initiates connection to the server
-        /// </summary>
-        private void Connect() {
-            //TODO GENERATE List of spreadsheets in open dropdown.
-
-            //Ensure server &name fields are filled out
-            if (usernameBox.Text == "")
-            {
-                MessageBox.Show("Please enter a username.");
-                usernameBox.Focus();
-                return;
-            }
-            if (passwordBox.Text == "")
-            {
-                MessageBox.Show("Please enter a password.");
-                passwordBox.Focus();
-                return;
-            }
-
-            // Have controller attempt connection
-            bool success = controller.StartConnection(usernameBox.Text, passwordBox.Text);
-            if (success)
-            {
-                //  Update form access & labels
-                connectButton.Enabled = false;
-                usernameBox.Enabled = false;
-                controller.MyForm = this;
-            }
-            else
-            {
-                MessageBox.Show("Server was not available or invalid input. Please try again.");
-                usernameBox.Focus();
             }
         }
 
@@ -378,27 +360,6 @@ namespace SpreadsheetGUI {
             if(CloseEvent != null) {
                 CloseEvent();
             }
-        }
-
-        /// <summary>
-        /// Connects to server when button is clicked.
-        /// </summary>
-        private void ConnectButton_Click(object sender, EventArgs e)
-        {
-            Connect();
-        }
-
-
-        /// <summary>
-        /// Tries connecting when enter key is pressed when password is entered.
-        /// </summary>
-        private void PasswordBox_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-            {
-                Connect();
-            }
-           
         }
 
         /// <summary>

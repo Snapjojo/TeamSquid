@@ -31,7 +31,7 @@ namespace SpreadsheetGUI
         //  Public properties
         public Form MyForm { get; set; }
         public delegate string PlayerCommands();
-        readonly PlayerCommands Commands;
+        readonly PlayerCommands Commands;   //  TODO leftovers from SpaceWars?
 
 
         private SpreadsheetView window;
@@ -270,10 +270,8 @@ namespace SpreadsheetGUI
         /// <param name="password">The user's password</param>
         /// <param name="spreadsheet">The user's requested spreadsheet</param>
         /// <returns>True if connection is successful, false if not.</returns>
-        public bool StartConnection(string username, string password)
+        public bool StartConnection(string address, string username, string password)
         {
-            string address = ""; // TODO Hardcode AWS server IP.
-
             //  Connect to Socket
             try
             {
