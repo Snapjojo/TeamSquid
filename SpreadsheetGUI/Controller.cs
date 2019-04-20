@@ -204,10 +204,23 @@ namespace SpreadsheetGUI
             }
 
             ////  Let the server speak to us
-            //Network.GetData(ss);
+            Network.GetData(ss);
+
+
 
             // TODO Handle initial connectivity protocol
-           
+            string totalData = ss.sb.ToString();
+            string[] parts = Regex.Split(totalData, @"(?<=[\n])");
+
+            // Process only the first two messages
+            lock (_lock)
+            {
+                foreach (string p in parts)
+                {
+                    //Add "spreadsheet name" to list of connectable spreadsheets.
+                }
+            }
+
             //Set the callback to be our processMessage method.
             ss.callMe = ProcessMessage;
         }
