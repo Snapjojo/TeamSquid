@@ -24,6 +24,8 @@ namespace SpreadsheetGUI
         //  Private Properties
         private static readonly object _lock = new object();
         private static Socket socket;
+        private static string username;
+        private static string password;
 
         //  Public properties
         public Form MyForm { get; set; }
@@ -278,13 +280,15 @@ namespace SpreadsheetGUI
         /// <param name="password">The user's password</param>
         /// <param name="spreadsheet">The user's requested spreadsheet</param>
         /// <returns>True if connection is successful, false if not.</returns>
-        public bool StartConnection(string address, string username, string password)
+        public bool StartConnection(string address, string user, string pssw)
         {
             //  Connect to Socket
             try
             {
                 //  Give network FirstContact so we can get our variables before reading more msgs
                 Network.ConnectToServer(address, username, password, FirstContact, ProcessMessage);
+                username = user;
+                password = pssw;
             }
             //  If failed, let View know
             catch (Exception)

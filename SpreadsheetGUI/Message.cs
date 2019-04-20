@@ -10,10 +10,6 @@ namespace SpreadsheetGUI
     [JsonObject(MemberSerialization.OptIn)]
     class Message
     {
-        public Message()
-        {
-
-        }
         /// <summary>
         /// The type of Json message being sent. Associated with EVERY Json message.
         /// </summary>

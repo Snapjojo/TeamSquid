@@ -26,6 +26,15 @@ namespace SpreadsheetGUI
         {
             this.login = login;
             InitializeComponent();
+
+            AutoLogin(); /////////////////////////////////////////DEBUG delete this when completed
+        }
+
+        public void AutoLogin()
+        {
+            server_text.Text = "155.98.111.74";
+            username_text.Text = "asdf";
+            password_text.Text = "asdf";
         }
 
         /// <summary>
