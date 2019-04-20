@@ -110,5 +110,13 @@ namespace SpreadsheetGUI
                 server_text.Focus();
             }
         }
+        private void CheckEnterKeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)Keys.Return)
+
+            {
+                ConnectButton_Click(sender, e);
+            }
+        }
     }
 }

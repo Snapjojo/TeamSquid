@@ -72,6 +72,7 @@
             this.server_text.Name = "server_text";
             this.server_text.Size = new System.Drawing.Size(145, 22);
             this.server_text.TabIndex = 3;
+            this.server_text.KeyPress += new System.Windows.Forms.KeyPressEventHandler(CheckEnterKeyPress);
             // 
             // username_text
             // 
@@ -79,6 +80,7 @@
             this.username_text.Name = "username_text";
             this.username_text.Size = new System.Drawing.Size(145, 22);
             this.username_text.TabIndex = 4;
+            this.username_text.KeyPress += new System.Windows.Forms.KeyPressEventHandler(CheckEnterKeyPress);
             // 
             // password_text
             // 
@@ -86,6 +88,8 @@
             this.password_text.Name = "password_text";
             this.password_text.Size = new System.Drawing.Size(145, 22);
             this.password_text.TabIndex = 5;
+            this.password_text.PasswordChar = '*';
+            this.password_text.KeyPress += new System.Windows.Forms.KeyPressEventHandler(CheckEnterKeyPress);
             // 
             // label1
             // 
