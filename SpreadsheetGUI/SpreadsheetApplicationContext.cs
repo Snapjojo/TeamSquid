@@ -31,7 +31,7 @@ namespace SpreadsheetGUI {
         /// <summary>
         /// Runs a form in this application context
         /// </summary>
-        public void RunNew() {
+        public bool RunNew() {
             // Create the window and the controller
             SpreadsheetGui window = new SpreadsheetGui();
             controller = new Controller(window);
@@ -43,7 +43,12 @@ namespace SpreadsheetGUI {
             window.FormClosed += (o, e) => { if (--windowCount <= 0) ExitThread(); };
 
             // Run the form
-            window.Show();
+            if (window.logged_in)
+            {
+                window.Show();
+                return true;
+            }
+            return false;
         }
 
         public static Controller getController()

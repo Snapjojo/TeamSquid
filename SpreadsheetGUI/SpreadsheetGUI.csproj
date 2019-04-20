@@ -74,6 +74,9 @@
     <EmbeddedResource Include="HelpGui.resx">
       <DependentUpon>HelpGui.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="LoginForm.resx">
+      <DependentUpon>LoginForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SpreadsheetGUI.resx">
       <DependentUpon>SpreadsheetGUI.cs</DependentUpon>
     </EmbeddedResource>

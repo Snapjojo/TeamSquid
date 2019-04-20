@@ -76,18 +76,21 @@ namespace SpreadsheetGUI
             //Ensure fields are filled out
             if (server_text.Text == "")
             {
+                error_text.Text = "";
                 MessageBox.Show("Please enter a server.");
                 server_text.Focus();
                 return;
             }
             if (username_text.Text == "")
             {
+                error_text.Text = "";
                 MessageBox.Show("Please enter a username.");
                 username_text.Focus();
                 return;
             }
             if (password_text.Text == "")
             {
+                error_text.Text = "";
                 MessageBox.Show("Please enter a password.");
                 password_text.Focus();
                 return;
@@ -103,7 +106,7 @@ namespace SpreadsheetGUI
             }
             else
             {
-                error_text.Text = "Server was unavailable or invalid credentials. Please try again.";
+                error_text.Text = "Server was unavailable, or invalid login. Please try again.";
                 server_text.Focus();
             }
         }

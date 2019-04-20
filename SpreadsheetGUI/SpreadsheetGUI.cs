@@ -9,18 +9,30 @@ namespace SpreadsheetGUI {
     public partial class SpreadsheetGui : Form, SpreadsheetView {
         private Controller controller;
         private LoginForm login_form;
+        public bool logged_in;
+
         /// <summary>
         /// Intializes Spreadsheet
         /// </summary>
         public SpreadsheetGui() {
+            logged_in = false;
             login_form = new LoginForm(Login, StartApp);
+            login_form.FormClosed += new FormClosedEventHandler(CloseApp);
             Application.Run(login_form);
         }
 
+        /// <summary>
+        /// Handles logging in as called by LoginForm. Routes to Controller.StartConnection.
+        /// </summary>
+        /// <param name="server"></param>
+        /// <param name="user"></param>
+        /// <param name="pssw"></param>
+        /// <returns></returns>
         public bool Login(string server, string user, string pssw)
         {
             controller = new Controller(this);
-            if (controller.StartConnection(server, user, pssw))
+            logged_in = controller.StartConnection(server, user, pssw);
+            if (logged_in)
             {
                 controller.MyForm = this;
                 return true;
@@ -28,10 +40,22 @@ namespace SpreadsheetGUI {
             return false;
         }
 
+        /// <summary>
+        /// Allows the Spreadsheet form to launch, called by LoginForm
+        /// </summary>
         public void StartApp()
         {
             login_form.Close();
             InitializeComponent();
+        }
+
+        public void CloseApp(object sender, FormClosedEventArgs e)
+        {
+            if (!logged_in)
+            {
+                this.Close();
+                Application.Exit();
+            }
         }
 
         /// <summary>
