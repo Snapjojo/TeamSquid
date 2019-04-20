@@ -110,7 +110,7 @@ namespace NetworkingController {
         /// <param name="s">The connection socket</param>
         /// <param name="message">The request</param>
         public static void Send(Socket s, string message) {
-            //  Adds newline onto desired message (per specification), then converts to bytes
+            //  converts to bytes
             byte[] messageBytes = Encoding.UTF8.GetBytes(message);
             try {
                 s.BeginSend(messageBytes, 0, messageBytes.Length, SocketFlags.None, SendCallback, s);
@@ -167,8 +167,8 @@ namespace NetworkingController {
 
             // Wait for more data from the server. This creates an "event loop".
             // ReceiveCallback will be invoked every time new data is available on the socket.
-            //ss.theSocket.BeginReceive(ss.messageBuffer, 0, ss.messageBuffer.Length,
-            //  SocketFlags.None, ReceiveCallback, ss);
+            ss.theSocket.BeginReceive(ss.messageBuffer, 0, ss.messageBuffer.Length,
+              SocketFlags.None, ReceiveCallback, ss);
 
         }
 

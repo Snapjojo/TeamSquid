@@ -23,17 +23,11 @@ namespace SpreadsheetGUI
     {
         //  Private Properties
         private static readonly object _lock = new object();
-        private bool ReceivedID;
-        private int PlayerID;
-        private string userName;
-        private Socket socket;
+        private static Socket socket;
 
         //  Public properties
         public Form MyForm { get; set; }
         public List<string> SpreadsheetNames;
-        public delegate string PlayerCommands();
-        readonly PlayerCommands Commands;   //  TODO leftovers from SpaceWars?
-
 
         private SpreadsheetView window;
 
@@ -209,8 +203,8 @@ namespace SpreadsheetGUI
                 }
             }
 
-            //  Let the server speak to us
-            Network.GetData(ss);
+            ////  Let the server speak to us
+            //Network.GetData(ss);
 
             // TODO Handle initial connectivity protocol
            
@@ -304,6 +298,100 @@ namespace SpreadsheetGUI
             /***************DELETE***************/
         }
 
+
+        /// <summary>
+        /// Sends server request Json messages based around a supplied enum key.
+        /// </summary>
+        /// <param name="keyword"></param>
+        public void SendJson(MessageKey key, int col, int row)
+        {
+            switch (key)
+            {
+                case MessageKey.Edit:
+                    {
+                        Message message = new Message();
+                        string jsonMessage;
+                        string cellName = window.GetName(col, row);
+                        var cellValue = ssModule.GetCellContents(cellName);
+                        List<string> dependees = new List<string>();
+                        foreach (string dependee in ssModule.dg.GetDependees(cellName))
+                        {
+                            dependees.Add(dependee);
+                        }
+                        message.type = "edit";
+                        message.value = cellValue; //TODO Verify this cast doesn't cause issue.
+                        message.cell = cellName;
+                        message.dependencies = dependees;
+                        Console.WriteLine(message);
+
+                        //Format jsonMessage to ignore null properties.
+                        jsonMessage = JsonConvert.SerializeObject(message, Newtonsoft.Json.Formatting.None,
+                                new JsonSerializerSettings
+                                {
+                                    NullValueHandling = NullValueHandling.Ignore
+                                });
+
+                        Console.WriteLine(jsonMessage);
+                        Network.Send(socket, jsonMessage);
+                        break;
+                    }
+                case MessageKey.Open:
+                    {
+                        Message message = new Message();
+                        message.type = "open";
+                        message.name = "";//TODO pipe in spreadsheet name from list.
+
+                        string jsonMessage = JsonConvert.SerializeObject(message, Newtonsoft.Json.Formatting.None,
+                                new JsonSerializerSettings
+                                {
+                                    NullValueHandling = NullValueHandling.Ignore
+                                });
+
+                        Network.Send(socket, jsonMessage);
+                        break;
+                    }
+                case MessageKey.Undo:
+                    {
+                        Message message = new Message();
+                        message.type = "undo";
+
+                        string jsonMessage = JsonConvert.SerializeObject(message, Newtonsoft.Json.Formatting.None,
+                                new JsonSerializerSettings
+                                {
+                                    NullValueHandling = NullValueHandling.Ignore
+                                });
+
+                        Network.Send(socket, jsonMessage);
+                        break;
+                    }
+                case MessageKey.Revert:
+                    {
+                        Message message = new Message();
+                        string cellName = window.GetName(col, row);
+                        message.type = "revert";
+                        message.cell = cellName;
+
+                        string jsonMessage = JsonConvert.SerializeObject(message, Newtonsoft.Json.Formatting.None,
+                                new JsonSerializerSettings
+                                {
+                                    NullValueHandling = NullValueHandling.Ignore
+                                });
+
+                        Network.Send(socket, jsonMessage);
+                        break;
+                    }
+                default:
+                    break;
+            }
+        }
+
+        public enum MessageKey
+        {
+            Edit = 0,
+            Open = 1,
+            Undo = 2,
+            Revert = 3
+        }
     }
 }
 

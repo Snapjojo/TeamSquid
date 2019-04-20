@@ -61,7 +61,7 @@ namespace SS {
         /// <summary>
         /// Dependancy Graph containg all cell dependencies.
         /// </summary>
-        private DependencyGraph dg;
+        public DependencyGraph dg;
 
         /// <summary>
         /// Valid Regex used in class

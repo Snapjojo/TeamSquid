@@ -35,11 +35,12 @@ namespace SpreadsheetGUI {
             //  Load or create new SS
             if (ss_selected == " - New Spreadsheet - ")
             {
-                //  TODO create new ss
+                //controller.SendJson(Controller.MessageKey.Open, 0, 0);
             }
             else
             {
                 //  TODO load ss from server
+                //controller.SendJson(Controller.MessageKey.Open, 0, 0);
             }
 
         }
@@ -209,7 +210,7 @@ namespace SpreadsheetGUI {
                         spreadsheetPanel1.GetSelection(out col, out row);
                         UpdateEvent(col, row, ContentBox.Text);
                         spreadsheetPanel1.Select();
-
+                        controller.SendJson(Controller.MessageKey.Edit, col, row);
                         //Move to next cell
                         Spreadsheet_KeyDown(spreadsheetPanel1, new KeyEventArgs(Keys.Down));
                     }
@@ -428,6 +429,7 @@ namespace SpreadsheetGUI {
         private void UndoBtn_Click(object sender, EventArgs e)
         {
             //TODO: send undo request
+            controller.SendJson(Controller.MessageKey.Undo, 0, 0);
         }
 
         /// <summary>
@@ -441,6 +443,9 @@ namespace SpreadsheetGUI {
         private void RevertBtn_Click(object sender, EventArgs e)
         {
             //TODO: send revert request
+            int row, col;
+            spreadsheetPanel1.GetSelection(out col, out row);
+            controller.SendJson(Controller.MessageKey.Revert, col, row);
         }
 
         /// <summary>
