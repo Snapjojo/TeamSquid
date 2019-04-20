@@ -43,7 +43,7 @@ namespace SpreadsheetGUI {
             window.FormClosed += (o, e) => { if (--windowCount <= 0) ExitThread(); };
 
             // Run the form
-            if (window.logged_in)
+            if (window.active)
             {
                 window.Show();
                 return true;

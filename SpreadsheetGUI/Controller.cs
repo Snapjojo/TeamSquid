@@ -30,6 +30,7 @@ namespace SpreadsheetGUI
 
         //  Public properties
         public Form MyForm { get; set; }
+        public List<string> SpreadsheetNames;
         public delegate string PlayerCommands();
         readonly PlayerCommands Commands;   //  TODO leftovers from SpaceWars?
 
@@ -285,6 +286,22 @@ namespace SpreadsheetGUI
             }
             //  If no exceptions, no problem!
             return true;
+        }
+
+
+        public IEnumerable<string> GetSpreadsheetNames()
+        {
+            SpreadsheetNames = new List<string>();
+            //  TODO ask server for names
+
+            /***************DELETE***************/
+            yield return "hello";
+            yield return "how";
+            yield return "are";
+            yield return "you";
+            yield return "today";
+            yield return "?";
+            /***************DELETE***************/
         }
 
     }

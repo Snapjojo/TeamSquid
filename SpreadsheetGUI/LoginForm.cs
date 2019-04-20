@@ -12,10 +12,6 @@ namespace SpreadsheetGUI
 {
     public partial class LoginForm : Form
     {
-        // Delegate to start application on successful login
-        public delegate void StartApplication();
-        StartApplication start;
-
         // Delegate to Controller's login function
         public delegate bool Login(string a, string b, string c);
         Login login;
@@ -26,9 +22,8 @@ namespace SpreadsheetGUI
         /// </summary>
         /// <param name="login"></param>
         /// <param name="start"></param>
-        public LoginForm(Login login, StartApplication start)
+        public LoginForm(Login login)
         {
-            this.start = start;
             this.login = login;
             InitializeComponent();
         }
@@ -60,10 +55,7 @@ namespace SpreadsheetGUI
         private void PasswordBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
-            {
                 Connect();
-            }
-
         }
 
         /// <summary>
@@ -102,7 +94,7 @@ namespace SpreadsheetGUI
             {
                 //  Update form access & labels
                 error_text.Text = "Success!";
-                start();
+                Close();
             }
             else
             {
@@ -113,10 +105,7 @@ namespace SpreadsheetGUI
         private void CheckEnterKeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
         {
             if (e.KeyChar == (char)Keys.Return)
-
-            {
                 ConnectButton_Click(sender, e);
-            }
         }
     }
 }

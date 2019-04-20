@@ -9,16 +9,29 @@ namespace SpreadsheetGUI {
     public partial class SpreadsheetGui : Form, SpreadsheetView {
         private Controller controller;
         private LoginForm login_form;
-        public bool logged_in;
+        private OpenForm open;
+        private bool logged_in;
+        private string ss_selected;
+        public bool active;
 
         /// <summary>
         /// Intializes Spreadsheet
         /// </summary>
-        public SpreadsheetGui() {
+        public SpreadsheetGui()
+        {
+            active = true;
+
+            //  Launch login form
             logged_in = false;
-            login_form = new LoginForm(Login, StartApp);
+            login_form = new LoginForm(Login);
             login_form.FormClosed += new FormClosedEventHandler(CloseApp);
             Application.Run(login_form);
+
+            //  Launch open form
+            ss_selected = "";
+            open = new OpenForm(controller.GetSpreadsheetNames, StartApp);
+            open.FormClosed += new FormClosedEventHandler(CloseApp);
+            Application.Run(open);
         }
 
         /// <summary>
@@ -40,19 +53,33 @@ namespace SpreadsheetGUI {
             return false;
         }
 
-        /// <summary>
-        /// Allows the Spreadsheet form to launch, called by LoginForm
-        /// </summary>
+        ///// <summary>
+        ///// Allows the Spreadsheet form to launch, called by LoginForm
+        ///// </summary>
+        //public void LaunchOpen()
+        //{
+        //    //  Kill login form
+        //    login_form.Close();
+
+        //    //  Launch open form
+        //    OpenForm open = new OpenForm(controller.GetSpreadsheetNames, StartApp);
+        //    Application.Run(open);
+        //}
+
         public void StartApp()
         {
-            login_form.Close();
+            //  Kill open form
+            open.Close();
+
+            //  Launch Spreadsheet
             InitializeComponent();
         }
 
         public void CloseApp(object sender, FormClosedEventArgs e)
         {
-            if (!logged_in)
+            if (!logged_in || ss_selected == "")
             {
+                active = false;
                 this.Close();
                 Application.Exit();
             }
