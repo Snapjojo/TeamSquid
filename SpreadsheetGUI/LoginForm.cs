@@ -32,7 +32,7 @@ namespace SpreadsheetGUI
 
         public void AutoLogin()
         {
-            server_text.Text = "155.98.111.74";
+            //server_text.Text = "155.98.111.74";   //  Wess' server
             username_text.Text = "asdf";
             password_text.Text = "asdf";
         }
