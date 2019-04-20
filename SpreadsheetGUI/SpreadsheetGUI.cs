@@ -29,9 +29,12 @@ namespace SpreadsheetGUI {
 
             //  Launch open form
             ss_selected = "";
-            open = new OpenForm(controller.GetSpreadsheetNames, StartApp);
+            open = new OpenForm(controller.GetSpreadsheetNames, GetSelection);
             open.FormClosed += new FormClosedEventHandler(CloseApp);
             Application.Run(open);
+            
+            //  Launch Spreadsheet
+            InitializeComponent();
         }
 
         /// <summary>
@@ -53,26 +56,12 @@ namespace SpreadsheetGUI {
             return false;
         }
 
-        ///// <summary>
-        ///// Allows the Spreadsheet form to launch, called by LoginForm
-        ///// </summary>
-        //public void LaunchOpen()
-        //{
-        //    //  Kill login form
-        //    login_form.Close();
-
-        //    //  Launch open form
-        //    OpenForm open = new OpenForm(controller.GetSpreadsheetNames, StartApp);
-        //    Application.Run(open);
-        //}
-
-        public void StartApp()
+        public void GetSelection(string ss_selected)
         {
+            this.ss_selected = ss_selected;
+
             //  Kill open form
             open.Close();
-
-            //  Launch Spreadsheet
-            InitializeComponent();
         }
 
         public void CloseApp(object sender, FormClosedEventArgs e)

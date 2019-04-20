@@ -59,6 +59,7 @@
             this.open_button.TabIndex = 2;
             this.open_button.Text = "Open";
             this.open_button.UseVisualStyleBackColor = true;
+            this.open_button.Click += new System.EventHandler(this.open_button_Click);
             // 
             // refresh_button
             // 
@@ -68,6 +69,7 @@
             this.refresh_button.TabIndex = 3;
             this.refresh_button.Text = "Refresh";
             this.refresh_button.UseVisualStyleBackColor = true;
+            this.refresh_button.Click += new System.EventHandler(this.refresh_button_Click);
             // 
             // OpenForm
             // 

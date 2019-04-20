@@ -13,28 +13,46 @@ namespace SpreadsheetGUI
     public partial class OpenForm : Form
     {
         // Delegate to return to GUI on successful login
-        public delegate void StartApp();
-        StartApp start;
+        public delegate void ReportSelection(string name);
+        ReportSelection report;
 
         // Delegate to update Spreadsheet options
         public delegate IEnumerable<string> GetOptions();
         GetOptions options;
 
-        public OpenForm(GetOptions options, StartApp start)
+        string[] names;
+
+        public OpenForm(GetOptions options, ReportSelection report)
         {
             this.options = options;
-            this.start = start;
+            this.report = report;
             InitializeComponent();
             RefreshNames();
+            options_box.SetSelected(0, true);
         }
 
         private void RefreshNames()
         {
-            options_box = new ListBox();
+            options_box.Items.Clear();
             options_box.Items.Add(" - New Spreadsheet - ");
             error_label.Text = "Loading options...";
+
             foreach (string option in options())
                 options_box.Items.Add(option);
+            error_label.Text = "Updated " + DateTime.Now.ToString();
+        }
+
+        private void refresh_button_Click(object sender, EventArgs e)
+        {
+            RefreshNames();
+        }
+
+        private void open_button_Click(object sender, EventArgs e)
+        {
+            error_label.Text = "Opening...";
+            
+            //  Report the title of the spreadsheet
+            report(options_box.Items[0].ToString());
         }
     }
 }
