@@ -27,14 +27,21 @@ namespace SpreadsheetGUI {
             login_form.FormClosed += new FormClosedEventHandler(CloseApp);
             Application.Run(login_form);
 
-            //  Launch open form
-            ss_selected = "";
-            open = new OpenForm(controller.GetSpreadsheetNames, GetSelection);
-            open.FormClosed += new FormClosedEventHandler(CloseApp);
-            Application.Run(open);
-            
+            Open();
+
             //  Launch Spreadsheet
             InitializeComponent();
+
+            //  Load or create new SS
+            if (ss_selected == " - New Spreadsheet - ")
+            {
+                //  TODO create new ss
+            }
+            else
+            {
+                //  TODO load ss from server
+            }
+
         }
 
         /// <summary>
@@ -74,6 +81,15 @@ namespace SpreadsheetGUI {
             }
         }
 
+        public void Open()
+        {
+            //  Launch open form
+            ss_selected = "";
+            open = new OpenForm(controller.GetSpreadsheetNames, GetSelection);
+            open.FormClosed += new FormClosedEventHandler(CloseApp);
+            Application.Run(open);
+        }
+
         /// <summary>
         /// Panel Changed
         /// </summary>
@@ -108,7 +124,7 @@ namespace SpreadsheetGUI {
         /// <summary>
         /// Fired when Save is chosen
         /// </summary>
-        public event Action<string> SaveEvent;
+        public event Action<string> SaveEvent; //   TODO needed?
 
         /// <summary>
         /// Inital load events
