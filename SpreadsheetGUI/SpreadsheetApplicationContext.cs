@@ -56,6 +56,10 @@ namespace SpreadsheetGUI {
             return controller;
         }
 
+        public int getWindowCount() {
+            return windowCount;
+        }
+
         /// <summary>
         /// Runs a form in this application context
         /// </summary>

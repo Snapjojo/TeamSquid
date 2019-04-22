@@ -148,7 +148,14 @@ namespace SpreadsheetGUI {
         /// </summary>
         public void OpenNew() {
             //TODO Reimplement multiple windows using server. Link this to "open" with server and an existing window somehow.
+         
             SpreadsheetApplicationContext.GetContext().RunNew();
+
+            //uses local sheet number based on window count to create a new spreadsheet. If the spreadsheet does not exist on the server
+            //when it receives an open message, the server should create a blank spreadsheet with the given name.
+            controller.SendJson(Controller.MessageKey.Open, 0, 0, login_form.username_text.Text,
+                login_form.password_text.Text, "Spreadsheet" + SpreadsheetApplicationContext.GetContext().getWindowCount());
+    
         }
 
         /// <summary>
