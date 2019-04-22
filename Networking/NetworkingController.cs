@@ -23,6 +23,7 @@ namespace NetworkingController {
     /// </summary>
     public static class Network {
         private const int port = 2112;
+        private static object _lock = new object();
 
         /// <summary>
         /// Start attempting to connect to a server
@@ -34,17 +35,19 @@ namespace NetworkingController {
             // Create a TCP/IP socket, then add it to a new SocketState
             Socket socket;
             IPAddress ipAddress;
+
             MakeSocket(hostName, out socket, out ipAddress);
             SocketState ss = new SocketState(socket);
 
-            //  Save the ProcessMessage method
-            ss.callMe = _processMessage;
+            ////  Save the ProcessMessage method
+            ss.callMe = _firstContact;
 
             //  Start up the socket
             socket.BeginConnect(ipAddress, port, ConnectedCallback, ss);
 
             //  Follow through with FirstContact method, which will start a continuous loop
-            _firstContact(ss);
+            lock(_lock)
+                GetData(ss);
         }
 
         /// <summary>
@@ -136,38 +139,47 @@ namespace NetworkingController {
         /// </summary>
         /// <param name="ar"></param>
         private static void ReceiveCallback(IAsyncResult ar) {
-            int numBytes = 0;
+            lock (_lock)
+            {
+                int numBytes = 0;
 
-            // Get the SocketState representing the connection on which data was received
-            SocketState ss = (SocketState)ar.AsyncState;
+                // Get the SocketState representing the connection on which data was received
+                SocketState ss = (SocketState)ar.AsyncState;
 
-            //  Attempt to receive information, although partner may have disconnected.
-            try {
-                numBytes = ss.theSocket.EndReceive(ar);
-            } catch (SocketException se) {
-                ss.closed(ss.ID);
-            }
-
-            // Convert the raw bytes to a string           
-            if (numBytes > 0) {
-                string message = Encoding.UTF8.GetString(ss.messageBuffer, 0, numBytes);
-
-                ss.sb.Append(message);
-                ss.callMe(ss);
-
-                try {
-                    ss.theSocket.BeginReceive(ss.messageBuffer, 0, ss.messageBuffer.Length,
-                        SocketFlags.None, ReceiveCallback, ss);
-                } catch (SocketException se) {
+                //  Attempt to receive information, although partner may have disconnected.
+                try
+                {
+                    numBytes = ss.theSocket.EndReceive(ar);
+                }
+                catch (SocketException se)
+                {
                     ss.closed(ss.ID);
                 }
+
+                // Convert the raw bytes to a string           
+                if (numBytes > 0)
+                {
+                    string message = Encoding.UTF8.GetString(ss.messageBuffer, 0, numBytes);
+
+                    ss.sb.Append(message);
+                    ss.callMe(ss);
+
+                    try
+                    {
+                        ss.theSocket.BeginReceive(ss.messageBuffer, 0, ss.messageBuffer.Length,
+                            SocketFlags.None, ReceiveCallback, ss);
+                    }
+                    catch (SocketException se)
+                    {
+                        ss.closed(ss.ID);
+                    }
+                }
+
+                // Wait for more data from the server. This creates an "event loop".
+                // ReceiveCallback will be invoked every time new data is available on the socket.
+                ss.theSocket.BeginReceive(ss.messageBuffer, 0, ss.messageBuffer.Length,
+                  SocketFlags.None, ReceiveCallback, ss);
             }
-
-            // Wait for more data from the server. This creates an "event loop".
-            // ReceiveCallback will be invoked every time new data is available on the socket.
-            ss.theSocket.BeginReceive(ss.messageBuffer, 0, ss.messageBuffer.Length,
-              SocketFlags.None, ReceiveCallback, ss);
-
         }
 
         /// <summary>

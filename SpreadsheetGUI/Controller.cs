@@ -29,6 +29,7 @@ namespace SpreadsheetGUI
 
         //  Public properties
         public Form MyForm { get; set; }
+
         public List<string> spreadsheetNames;
 
         private SpreadsheetView window;
@@ -199,27 +200,23 @@ namespace SpreadsheetGUI
                 Thread.Sleep(time);
                 counter += time;
                 //  If we've been waiting for longer than 5 seconds, give up
-                if (counter >= 5000)
+                if (counter >= 10000)
                 {
                     throw new Exception("Could not connect to the server after 5 seconds!");
                 }
             }
 
-            ////  Let the server speak to us
-            Network.GetData(ss);
 
             string totalData = ss.sb.ToString();
-            string[] parts = Regex.Split(totalData, @"(?<=[\n\n])");
+            string[] parts = Regex.Split(totalData, @"(?<=[\n])");
+            parts[0] = parts[0].Substring(0, parts[0].Length - 1);
 
             //TODO debug
-            Message message = (Message)JsonConvert.DeserializeObject(parts[0],
-                                new JsonSerializerSettings
-                                {
-                                    NullValueHandling = NullValueHandling.Ignore
-                                });
+            JsonSerializerSettings poopoo = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
+            Message message = (Message) JsonConvert.DeserializeObject(parts[0].ToString(), typeof(Message), poopoo);
 
             //TODO uncomment this
-            //SetSpreadsheetNames(message.spreadsheets);
+            SetSpreadsheetNames(message.spreadsheets);
 
 
             //Set the callback to be our processMessage method.
@@ -235,6 +232,23 @@ namespace SpreadsheetGUI
         {
             string totalData = ss.sb.ToString();
             string[] parts = Regex.Split(totalData, @"(?<=[\n\n])");
+
+
+            //  Wait for the connection to be finished (avg time is 20 ms)
+            int time = 5;
+            int counter = 0;
+
+            //  Put thread to sleep in small increments until the socket is connected
+            while (!socket.Connected)
+            {
+                Thread.Sleep(time);
+                counter += time;
+                //  If we've been waiting for longer than 5 seconds, give up
+                if (counter >= 5000)
+                {
+                    throw new Exception("Could not connect to the server after 5 seconds!");
+                }
+            }
 
             // Loop until we have processed all messages.
             lock (_lock)
@@ -305,8 +319,10 @@ namespace SpreadsheetGUI
         public void SetSpreadsheetNames(List<string> names)
         {
             spreadsheetNames = new List<string>();
-            //TODO deserialize json in names?
-            spreadsheetNames = names;
+            foreach (string sheet in names)
+            {
+                spreadsheetNames.Add(sheet);
+            }
         }
 
         public IEnumerable<string> GetSpreadsheetNames()
