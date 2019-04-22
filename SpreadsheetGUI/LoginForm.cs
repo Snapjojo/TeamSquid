@@ -72,8 +72,6 @@ namespace SpreadsheetGUI
         /// </summary>
         private void Connect()
         {
-            //TODO GENERATE List of spreadsheets in open dropdown.
-
             //Ensure fields are filled out
             if (server_text.Text == "")
             {

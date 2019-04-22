@@ -113,10 +113,6 @@ namespace SpreadsheetGUI {
         /// </summary>
         public event Action<string> SelectionEvent;
 
-        /// <summary>
-        /// Fired when Save is chosen
-        /// </summary>
-        public event Action<string> SaveEvent; //   TODO needed?
 
         /// <summary>
         /// Inital load events
@@ -187,18 +183,12 @@ namespace SpreadsheetGUI {
             switch (e.KeyCode) {
                 case Keys.Enter:
                     if (UpdateEvent != null) {
-
                         //Update Cell
                         int row, col;
                         spreadsheetPanel1.GetSelection(out col, out row);
-
-                        //TODO Ensure updates happen from the returning server data. NOT what is immediately entered here.
-                        UpdateEvent(col, row, ContentBox.Text);
-
-
-
                         spreadsheetPanel1.Select();
                         controller.SendJson(Controller.MessageKey.Edit, col, row);
+
                         //Move to next cell
                         Spreadsheet_KeyDown(spreadsheetPanel1, new KeyEventArgs(Keys.Down));
                     }
@@ -416,7 +406,6 @@ namespace SpreadsheetGUI {
         /// </summary>
         private void UndoBtn_Click(object sender, EventArgs e)
         {
-            //TODO: send undo request
             controller.SendJson(Controller.MessageKey.Undo);
         }
 
@@ -430,7 +419,6 @@ namespace SpreadsheetGUI {
         /// </summary>
         private void RevertBtn_Click(object sender, EventArgs e)
         {
-            //TODO: send revert request
             int row, col;
             spreadsheetPanel1.GetSelection(out col, out row);
             controller.SendJson(Controller.MessageKey.Revert, col, row);

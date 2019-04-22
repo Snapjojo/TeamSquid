@@ -49,7 +49,6 @@ namespace SpreadsheetGUI
             window.CloseEvent += HandleClose;
             window.SelectionEvent += HandleChange;
             window.UpdateEvent += HandleUpdate;
-            window.SaveEvent += HandleSave;
         }
 
         /// <summary>
@@ -122,7 +121,7 @@ namespace SpreadsheetGUI
         /// <param name="content"></param>
         private void HandleUpdate(int col, int row, String content)
         {
-
+            //TODO This is where cell updates are happening. Call this with json data returned from server in ProcessMessage.
             String name = window.GetName(col, row);
             try
             {
@@ -211,13 +210,10 @@ namespace SpreadsheetGUI
             string[] parts = Regex.Split(totalData, @"(?<=[\n])");
             parts[0] = parts[0].Substring(0, parts[0].Length - 1);
 
-            //TODO debug
-            JsonSerializerSettings poopoo = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
-            Message message = (Message) JsonConvert.DeserializeObject(parts[0].ToString(), typeof(Message), poopoo);
+            JsonSerializerSettings settings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
+            Message message = (Message) JsonConvert.DeserializeObject(parts[0].ToString(), typeof(Message), settings);
 
-            //TODO uncomment this
             SetSpreadsheetNames(message.spreadsheets);
-
 
             //Set the callback to be our processMessage method.
             ss.callMe = ProcessMessage;
@@ -265,16 +261,11 @@ namespace SpreadsheetGUI
                     // The regex splitter will include the last string even if it doesn't end with a '\n',
                     if (p[p.Length - 1] != '\n')
                         break;
-
-                    //TODO Debug this. Deserialize message into json.
-                    Message message = (Message) JsonConvert.DeserializeObject(p,
-                                new JsonSerializerSettings
-                                {
-                                    NullValueHandling = NullValueHandling.Ignore
-                                });
-
-                    //TODO Do something with string segment (populate spreadsheet or create master string to populate spreadsheet.)
-                    // Do we even need to parse individual lines? Maybe take every individual line and just make edit to SS as they come.
+                    JsonSerializerSettings settings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
+                    Message message = (Message)JsonConvert.DeserializeObject(p.ToString(), typeof(Message), settings);
+                    
+                    //TODO Correct HandleUpdate.
+                    //HandleUpdate(message);
 
                     // Then remove it from the SocketState's growable buffer
                     ss.sb.Remove(0, p.Length);
