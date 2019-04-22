@@ -13,7 +13,7 @@ namespace SpreadsheetGUI
     public partial class LoginForm : Form
     {
         // Delegate to Controller's login function
-        public delegate bool Login(string a, string b, string c);
+        public delegate bool Login(string a);
         Login login;
         bool logged_in = false;
 
@@ -27,7 +27,7 @@ namespace SpreadsheetGUI
             this.login = login;
             InitializeComponent();
 
-            AutoLogin(); /////////////////////////////////////////DEBUG delete this when completed
+            //AutoLogin(); /////////////////////////////////////////DEBUG delete this when completed
         }
 
         public void AutoLogin()
@@ -98,7 +98,7 @@ namespace SpreadsheetGUI
             }
 
             // Have controller attempt connection
-            bool success = login(server_text.Text, username_text.Text, password_text.Text);
+            bool success = login(server_text.Text);
             if (success)
             {
                 //  Update form access & labels

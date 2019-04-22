@@ -27,8 +27,6 @@ namespace SpreadsheetGUI {
             login_form.FormClosed += new FormClosedEventHandler(CloseApp);
             Application.Run(login_form);
 
-            Open();
-
             //  Launch Spreadsheet
             InitializeComponent();
 
@@ -52,10 +50,10 @@ namespace SpreadsheetGUI {
         /// <param name="user"></param>
         /// <param name="pssw"></param>
         /// <returns></returns>
-        public bool Login(string server, string user, string pssw)
+        public bool Login(string server)
         {
             controller = new Controller(this);
-            logged_in = controller.StartConnection(server, user, pssw);
+            logged_in = controller.StartConnection(server);
             if (logged_in)
             {
                 controller.MyForm = this;
@@ -82,13 +80,17 @@ namespace SpreadsheetGUI {
             }
         }
 
-        public void Open()
+        public string Open()
         {
             //  Launch open form
             ss_selected = "";
             open = new OpenForm(controller.GetSpreadsheetNames, GetSelection);
             open.FormClosed += new FormClosedEventHandler(CloseApp);
             Application.Run(open);
+
+            Console.WriteLine(ss_selected);
+
+            return ss_selected; //TODO return the openform's selected server name.
         }
 
         /// <summary>
@@ -172,18 +174,10 @@ namespace SpreadsheetGUI {
         /// Handles the Click event of the openItem control.
         /// </summary>
         private void OpenItem_Click(object sender, EventArgs e) {
-            //TODO Implement message sending. Add username & PW.
+            string spreadsheetName = Open();
 
-
-            fileDialog1.Filter = "SpreadSheet files (*.ss)|*.ss|All files (*.*)|*.*";
-            fileDialog1.FilterIndex = 1;
-            fileDialog1.RestoreDirectory = true;
-            DialogResult result = fileDialog1.ShowDialog();
-            if (result == DialogResult.Yes || result == DialogResult.OK) {
-                if (FileChosenEvent != null) {
-                    FileChosenEvent(fileDialog1.FileName);
-                }
-            }
+            controller.SendJson(Controller.MessageKey.Open, 0, 0, login_form.username_text.Text,
+                login_form.password_text.Text, spreadsheetName);
         }
 
         /// <summary>
@@ -208,7 +202,12 @@ namespace SpreadsheetGUI {
                         //Update Cell
                         int row, col;
                         spreadsheetPanel1.GetSelection(out col, out row);
+
+                        //TODO Ensure updates happen from the returning server data. NOT what is immediately entered here.
                         UpdateEvent(col, row, ContentBox.Text);
+
+
+
                         spreadsheetPanel1.Select();
                         controller.SendJson(Controller.MessageKey.Edit, col, row);
                         //Move to next cell
@@ -228,8 +227,8 @@ namespace SpreadsheetGUI {
         private void SpreadsheetPanel1_SelectionChanged(SpreadsheetPanel sender) {
             if (SelectionEvent != null) {
                 int row, col;
-                spreadsheetPanel1.GetSelection(out col, out row);
-                SelectionEvent(GetName(col, row));
+                /*spreadsheetPanel1.GetSelection(out col, out row);
+                SelectionEvent(GetName(col, row));*/
                 ContentBox.Select();
                ContentBox.SelectionStart = 0;
                 ContentBox.SelectionLength = ContentBox.Text.Length;
@@ -429,7 +428,7 @@ namespace SpreadsheetGUI {
         private void UndoBtn_Click(object sender, EventArgs e)
         {
             //TODO: send undo request
-            controller.SendJson(Controller.MessageKey.Undo, 0, 0);
+            controller.SendJson(Controller.MessageKey.Undo);
         }
 
         /// <summary>
@@ -448,18 +447,6 @@ namespace SpreadsheetGUI {
             controller.SendJson(Controller.MessageKey.Revert, col, row);
         }
 
-        /// <summary>
-        /// This method updates the text in the cells as their being typed in the content box.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ContentBox_TextChanged(object sender, EventArgs e) {
-            //Update Cell in real time
-            int row, col;
-            spreadsheetPanel1.GetSelection(out col, out row);
-            UpdateEvent(col, row, ContentBox.Text);
-
-        }
     }
 }
 

@@ -28,7 +28,7 @@ namespace NetworkingController {
         /// Start attempting to connect to a server
         /// </summary>
         /// <param name="ip">The address of the server</param>
-        public static void ConnectToServer(string hostName, string username, string password, NetworkAction _firstContact, NetworkAction _processMessage) {
+        public static void ConnectToServer(string hostName, NetworkAction _firstContact, NetworkAction _processMessage) {
             System.Diagnostics.Debug.WriteLine("connecting  to " + hostName);
 
             // Create a TCP/IP socket, then add it to a new SocketState
@@ -124,8 +124,6 @@ namespace NetworkingController {
         /// </summary>
         /// <param name="ar"></param>
         private static void ConnectedCallback(IAsyncResult ar) {
-            Console.WriteLine("contact from server");
-
             // Get the SocketState associated with this connection 
             SocketState ss = (SocketState)ar.AsyncState;
 
@@ -153,7 +151,7 @@ namespace NetworkingController {
             // Convert the raw bytes to a string           
             if (numBytes > 0) {
                 string message = Encoding.UTF8.GetString(ss.messageBuffer, 0, numBytes);
-                //TODO Format string as proper JSON
+
                 ss.sb.Append(message);
                 ss.callMe(ss);
 
