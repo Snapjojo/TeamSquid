@@ -134,13 +134,12 @@ namespace SpreadsheetGUI
                 window.DrawCell(col, row, ssModule.GetCellValue(name).ToString());
                 DrawFromFile();
                 HandleChange(name);
+                hasUpdated = true;
             }
             catch (Exception e)
             {
                 window.UpdateErrorLabel(true, "You have attempted to add a " + e.GetType().ToString() + " at " + name);
             }
-
-            hasUpdated = true;
 
         }
 

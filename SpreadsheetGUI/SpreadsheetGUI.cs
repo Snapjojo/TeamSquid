@@ -207,6 +207,7 @@ namespace SpreadsheetGUI {
                             UpdateEvent(col, row, ContentBox.Text);
                             //Move to next cell
                             Spreadsheet_KeyDown(spreadsheetPanel1, new KeyEventArgs(Keys.Down));
+                            controller.hasUpdated = false;
                         }
 
                         
