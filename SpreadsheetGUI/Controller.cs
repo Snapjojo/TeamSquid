@@ -36,6 +36,8 @@ namespace SpreadsheetGUI
 
         private Spreadsheet ssModule;
 
+        public bool hasUpdated = false;
+
         /// <summary>
         /// Constructor contollor for when a new/blank spreadsheet is added.
         /// </summary>
@@ -137,6 +139,8 @@ namespace SpreadsheetGUI
             {
                 window.UpdateErrorLabel(true, "You have attempted to add a " + e.GetType().ToString() + " at " + name);
             }
+
+            hasUpdated = true;
 
         }
 

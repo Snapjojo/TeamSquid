@@ -199,15 +199,17 @@ namespace SpreadsheetGUI {
                         int row, col;
                         spreadsheetPanel1.GetSelection(out col, out row);
 
-                        //TODO Ensure updates happen from the returning server data. NOT what is immediately entered here.
-                        UpdateEvent(col, row, ContentBox.Text);
-
-
-
+                        //TODO Ensure updates happen from the returning server data. NOT what is immediately entered here.     
                         spreadsheetPanel1.Select();
                         controller.SendJson(Controller.MessageKey.Edit, col, row);
-                        //Move to next cell
-                        Spreadsheet_KeyDown(spreadsheetPanel1, new KeyEventArgs(Keys.Down));
+
+                        if (controller.hasUpdated) {
+                            UpdateEvent(col, row, ContentBox.Text);
+                            //Move to next cell
+                            Spreadsheet_KeyDown(spreadsheetPanel1, new KeyEventArgs(Keys.Down));
+                        }
+
+                        
                     }
                     break;
                 default:
