@@ -148,7 +148,14 @@ namespace SpreadsheetGUI {
         /// </summary>
         public void OpenNew() {
             //TODO Reimplement multiple windows using server. Link this to "open" with server and an existing window somehow.
+         
             SpreadsheetApplicationContext.GetContext().RunNew();
+
+            //uses local sheet number based on window count to create a new spreadsheet. If the spreadsheet does not exist on the server
+            //when it receives an open message, the server should create a blank spreadsheet with the given name.
+            controller.SendJson(Controller.MessageKey.Open, 0, 0, login_form.username_text.Text,
+                login_form.password_text.Text, "Spreadsheet" + SpreadsheetApplicationContext.GetContext().getWindowCount());
+    
         }
 
         /// <summary>
@@ -192,15 +199,18 @@ namespace SpreadsheetGUI {
                         int row, col;
                         spreadsheetPanel1.GetSelection(out col, out row);
 
-                        //TODO Ensure updates happen from the returning server data. NOT what is immediately entered here.
-                        UpdateEvent(col, row, ContentBox.Text);
-
-
-
+                        //TODO Ensure updates happen from the returning server data. NOT what is immediately entered here.     
                         spreadsheetPanel1.Select();
                         controller.SendJson(Controller.MessageKey.Edit, col, row);
-                        //Move to next cell
-                        Spreadsheet_KeyDown(spreadsheetPanel1, new KeyEventArgs(Keys.Down));
+
+                        if (controller.hasUpdated) {
+                            UpdateEvent(col, row, ContentBox.Text);
+                            //Move to next cell
+                            Spreadsheet_KeyDown(spreadsheetPanel1, new KeyEventArgs(Keys.Down));
+                            controller.hasUpdated = false;
+                        }
+
+                        
                     }
                     break;
                 default:

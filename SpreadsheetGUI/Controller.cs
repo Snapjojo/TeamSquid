@@ -36,6 +36,8 @@ namespace SpreadsheetGUI
 
         private Spreadsheet ssModule;
 
+        public bool hasUpdated = false;
+
         /// <summary>
         /// Constructor contollor for when a new/blank spreadsheet is added.
         /// </summary>
@@ -132,6 +134,7 @@ namespace SpreadsheetGUI
                 window.DrawCell(col, row, ssModule.GetCellValue(name).ToString());
                 DrawFromFile();
                 HandleChange(name);
+                hasUpdated = true;
             }
             catch (Exception e)
             {
