@@ -30,17 +30,6 @@ namespace SpreadsheetGUI {
             //  Launch Spreadsheet
             InitializeComponent();
 
-            //  Load or create new SS
-            if (ss_selected == " - New Spreadsheet - ")
-            {
-                //controller.SendJson(Controller.MessageKey.Open, 0, 0);
-            }
-            else
-            {
-                //  TODO load ss from server
-                //controller.SendJson(Controller.MessageKey.Open, 0, 0);
-            }
-
         }
 
         /// <summary>

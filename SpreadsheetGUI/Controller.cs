@@ -268,7 +268,7 @@ namespace SpreadsheetGUI
             }
             try
             {
-                MyForm.Invoke(new MethodInvoker(() => MyForm.Invalidate(true))); //TODO Validate necessity
+                MyForm.Invoke(new MethodInvoker(() => MyForm.Invalidate(true)));
             }
             //  When the window is closed, this throws an exception. Will now close more gracefully
             catch (Exception e)
@@ -359,7 +359,7 @@ namespace SpreadsheetGUI
                     {
                         Message message = new Message();
                         message.type = "open";
-                        message.name = "";//TODO pipe in spreadsheet name from list.
+                        message.name = sheet;
 
                         string jsonMessage = JsonConvert.SerializeObject(message, Newtonsoft.Json.Formatting.None,
                                 new JsonSerializerSettings

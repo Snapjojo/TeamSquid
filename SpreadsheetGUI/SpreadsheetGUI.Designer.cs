@@ -159,12 +159,6 @@ namespace SpreadsheetGUI {
             this.openItem.Text = "Open";
             this.openItem.Click += new System.EventHandler(this.OpenItem_Click);
             // 
-            // newSheetToolStripMenuItem
-            // 
-            this.newSheetToolStripMenuItem.Name = "newSheetToolStripMenuItem";
-            this.newSheetToolStripMenuItem.Size = new System.Drawing.Size(179, 28);
-            this.newSheetToolStripMenuItem.Text = "New Sheet";
-            // 
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
