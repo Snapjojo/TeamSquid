@@ -59,6 +59,12 @@ namespace SpreadsheetGUI
 
         private void options_box_SelectedIndexChanged(object sender, EventArgs e)
         {
+            string selection;
+            try
+            {
+                selection = options_box.SelectedItem.ToString();
+            }
+            catch (Exception) { return; }
             if (options_box.SelectedItem.ToString() != " - New Spreadsheet - ")
             {
                 open_button.Enabled = true;
