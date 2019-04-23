@@ -78,7 +78,7 @@ namespace SpreadsheetGUI {
             open.FormClosed += new FormClosedEventHandler(CloseApp);
             open.ShowDialog();
 
-            return ss_selected; //TODO return the openform's selected server name.
+            return ss_selected;
         }
 
         public void ReceiveSheetName(string name)
@@ -165,9 +165,8 @@ namespace SpreadsheetGUI {
         private void OpenItem_Click(object sender, EventArgs e) {
             string spreadsheetName = Open();
 
-            
             //  TODO un-comment the line below
-            controller.SendJson(Controller.MessageKey.Open, 0, 0, spreadsheetName);
+            //controller.SendJson(Controller.MessageKey.Open, 0, 0, spreadsheetName);
         }
 
         /// <summary>

@@ -348,7 +348,7 @@ namespace SpreadsheetGUI
 
         public void SetSpreadsheetNames(List<string> names)
         {
-            //spreadsheetNames = new List<string>();
+            spreadsheetNames = new List<string>();
             foreach (string sheet in names)
             {
                 spreadsheetNames.Add(sheet);
@@ -357,7 +357,7 @@ namespace SpreadsheetGUI
 
         public IEnumerable<string> GetSpreadsheetNames()
         {
-            spreadsheetNames = new List<string> { "a", "b", "c" };      //  TODO: Delete this line
+            //spreadsheetNames = new List<string> { "a", "b", "c" };      //  TODO: Delete this line
             foreach (string name in spreadsheetNames)
             {
                 yield return name;
