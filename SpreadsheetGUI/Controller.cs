@@ -143,7 +143,7 @@ namespace SpreadsheetGUI
 
                 window.UpdateErrorLabel(false, "");
                 window.DrawCell(col, row, ssModule.GetCellValue(name).ToString());
-                DrawFromFile();
+                //DrawFromFile();
             }
             catch (Exception e)
             {
@@ -306,9 +306,9 @@ namespace SpreadsheetGUI
                                 foreach (string cellName in message.spreadsheet.Keys)
                                 {
                                     ssModule.SetContentsOfCell(cellName, message.spreadsheet[cellName]);
-                                    char i0 = cellName[0]; ;
-                                    int col = char.ToUpper(i0) - 64;
-                                    int row = int.Parse(cellName.Substring(1, cellName.Length - 1));
+                                    char i0 = cellName[0];
+                                    int col = char.ToUpper(i0) - 65;
+                                    int row = int.Parse(cellName.Substring(1, cellName.Length - 1)) - 1;
                                     MyForm.Invoke(new MethodInvoker(delegate { HandleUpdate(col, row, message.spreadsheet[cellName]); }));
                                 }
                             }
