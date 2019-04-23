@@ -296,9 +296,10 @@ namespace SpreadsheetGUI
                     switch (message.type)
                     {
                         case "error":
-                            //TODO Handle error messages properly.
-                            break;
-                        case "list":
+                            if (message.code == 1)
+                                Console.WriteLine("Invalid Authorization - Incorrect Username or Password");
+                            else
+                                Console.WriteLine("Circular Dependency Detected");
                             break;
                         case "full send":
                             lock (_lock)
