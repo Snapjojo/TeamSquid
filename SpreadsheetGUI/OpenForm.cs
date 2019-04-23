@@ -28,7 +28,9 @@ namespace SpreadsheetGUI
             this.report = report;
             InitializeComponent();
             RefreshNames();
-            options_box.SetSelected(0, true);
+            open_button.Enabled = false;
+            label_new_ss.Visible = false;
+            text_new_ss.Visible = false;
         }
 
         private void RefreshNames()
@@ -42,17 +44,39 @@ namespace SpreadsheetGUI
             error_label.Text = "Updated " + DateTime.Now.ToString();
         }
 
-        private void refresh_button_Click(object sender, EventArgs e)
-        {
-            RefreshNames();
-        }
-
         private void open_button_Click(object sender, EventArgs e)
         {
             error_label.Text = "Opening...";
+
+            //  If new spreadsheet is selected
+            if (options_box.SelectedItem.ToString() == " - New Spreadsheet - ")
+                report(text_new_ss.Text);
             
             //  Report the title of the spreadsheet
             report(options_box.SelectedItem.ToString());
+        }
+
+        private void options_box_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (options_box.SelectedItem.ToString() != " - New Spreadsheet - ")
+            {
+                open_button.Enabled = true;
+                label_new_ss.Visible = false;
+                text_new_ss.Visible = false;
+            }
+            else
+            {
+                label_new_ss.Visible = true;
+                text_new_ss.Visible = true;
+            }
+        }
+
+        private void text_new_ss_TextChanged(object sender, EventArgs e)
+        {
+            if (text_new_ss.Text != "" && !text_new_ss.Text.Contains("New Spreadsheet"))
+                open_button.Enabled = true;
+            else
+                open_button.Enabled = false;
         }
     }
 }

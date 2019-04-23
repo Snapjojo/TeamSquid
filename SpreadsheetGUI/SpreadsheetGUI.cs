@@ -166,7 +166,7 @@ namespace SpreadsheetGUI {
             string spreadsheetName = Open();
 
             //  TODO un-comment the line below
-            //controller.SendJson(Controller.MessageKey.Open, 0, 0, spreadsheetName);
+            controller.SendJson(Controller.MessageKey.Open, 0, 0, spreadsheetName);
         }
 
         /// <summary>
