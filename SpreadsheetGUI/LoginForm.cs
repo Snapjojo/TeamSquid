@@ -13,7 +13,7 @@ namespace SpreadsheetGUI
     public partial class LoginForm : Form
     {
         // Delegate to Controller's login function
-        public delegate bool Login(string a, string b, string c);
+        public delegate bool Login(string a);
         Login login;
         bool logged_in = false;
 
@@ -32,8 +32,8 @@ namespace SpreadsheetGUI
 
         public void AutoLogin()
         {
-            //server_text.Text = "155.98.111.74";   //  Wess' server
-            username_text.Text = "asdf";
+            server_text.Text = "18.221.160.218";   //  Wess' server
+            username_text.Text = "Jojo";
             password_text.Text = "asdf";
         }
 
@@ -72,8 +72,6 @@ namespace SpreadsheetGUI
         /// </summary>
         private void Connect()
         {
-            //TODO GENERATE List of spreadsheets in open dropdown.
-
             //Ensure fields are filled out
             if (server_text.Text == "")
             {
@@ -98,7 +96,8 @@ namespace SpreadsheetGUI
             }
 
             // Have controller attempt connection
-            bool success = login(server_text.Text, username_text.Text, password_text.Text);
+            bool success = login(server_text.Text);
+            System.Threading.Thread.Sleep(1000);
             if (success)
             {
                 //  Update form access & labels

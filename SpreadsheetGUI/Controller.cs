@@ -29,11 +29,12 @@ namespace SpreadsheetGUI
 
         //  Public properties
         public Form MyForm { get; set; }
-        public List<string> SpreadsheetNames;
+
+        public static List<string> spreadsheetNames;
 
         private SpreadsheetView window;
 
-        private Spreadsheet ssModule;
+        public Spreadsheet ssModule;
 
         /// <summary>
         /// Constructor contollor for when a new/blank spreadsheet is added.
@@ -48,7 +49,12 @@ namespace SpreadsheetGUI
             window.CloseEvent += HandleClose;
             window.SelectionEvent += HandleChange;
             window.UpdateEvent += HandleUpdate;
-            window.SaveEvent += HandleSave;
+        }
+
+        internal void SetAuthentication(string password_text, string username_text)
+        {
+            username = username_text;
+            password = password_text;
         }
 
         /// <summary>
@@ -121,7 +127,7 @@ namespace SpreadsheetGUI
         /// <param name="content"></param>
         private void HandleUpdate(int col, int row, String content)
         {
-
+            //TODO This is where cell updates are happening. Call this with json data returned from server in ProcessMessage.
             String name = window.GetName(col, row);
             try
             {
@@ -186,8 +192,53 @@ namespace SpreadsheetGUI
         /// <param name="ss"></param>
         private void FirstContact(SocketState ss)
         {
+            System.Console.WriteLine("FirstContact Hit");
             // Save the newly-created socket
             socket = ss.theSocket;
+
+            //  Wait for the connection to be finished (avg time is 20 ms)
+            int time = 5;
+            int counter = 0;
+
+            //  Put thread to sleep in small increments until the socket is connected
+            while (!socket.Connected)
+            {
+                Thread.Sleep(time);
+                counter += time;
+                //  If we've been waiting for longer than 5 seconds, give up
+                if (counter >= 10000)
+                {
+                    throw new Exception("Could not connect to the server after 5 seconds!");
+                }
+            }
+
+
+            string totalData = ss.sb.ToString();
+            string[] parts = Regex.Split(totalData, @"(?<=[\n])");
+            parts[0] = parts[0].Substring(0, parts[0].Length - 1);
+
+            JsonSerializerSettings settings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
+            Message message = (Message) JsonConvert.DeserializeObject(parts[0].ToString(), typeof(Message), settings);
+
+            //Ensure this is the same controller created in the view
+            SetSpreadsheetNames(message.spreadsheets);
+
+            //Set the callback to be our processMessage method.
+            ss.callMe = ProcessMessage;
+            Network.ConfigureCallBack(ss);
+        }
+
+
+        /// <summary>
+        /// This method processes server messages, line by line, from a supplied SocketState's string buffer.
+        /// </summary>
+        /// <param name="ss"></param>
+        private void ProcessMessage(SocketState ss)
+        {
+            System.Console.WriteLine("ProcessMessage Hit");
+            string totalData = ss.sb.ToString();
+            string[] parts = Regex.Split(totalData, @"(?<=[\n\n])");
+
 
             //  Wait for the connection to be finished (avg time is 20 ms)
             int time = 5;
@@ -205,45 +256,18 @@ namespace SpreadsheetGUI
                 }
             }
 
-            ////  Let the server speak to us
-            Network.GetData(ss);
-
-
-
-            // TODO Handle initial connectivity protocol
-            string totalData = ss.sb.ToString();
-            string[] parts = Regex.Split(totalData, @"(?<=[\n])");
-
-            // Process only the first two messages
-            lock (_lock)
-            {
-                foreach (string p in parts)
-                {
-                    //Add "spreadsheet name" to list of connectable spreadsheets.
-                }
-            }
-
-            //Set the callback to be our processMessage method.
-            ss.callMe = ProcessMessage;
-        }
-
-
-        /// <summary>
-        /// This method processes server messages, line by line, from a supplied SocketState's string buffer.
-        /// </summary>
-        /// <param name="ss"></param>
-        private void ProcessMessage(SocketState ss)
-        {
-            string totalData = ss.sb.ToString();
-            string[] parts = Regex.Split(totalData, @"(?<=[\n])");
-
             // Loop until we have processed all messages.
             lock (_lock)
             {
                 foreach (string p in parts)
                 {
-                    // Ignore empty strings added by the regex splitter
+                    // Ignore empty strings added by the regex splitter and single endline characters from the split
                     if (p.Length == 0)
+                    {
+                        ss.sb.Remove(0, p.Length);
+                        continue;
+                    }
+                    if(p == "\n")
                     {
                         ss.sb.Remove(0, p.Length);
                         continue;
@@ -253,9 +277,34 @@ namespace SpreadsheetGUI
                     if (p[p.Length - 1] != '\n')
                         break;
 
-                    JObject obj = JObject.Parse(p);
-                    //TODO Do something with string segment (populate spreadsheet or create master string to populate spreadsheet.)
-                    // Do we even need to parse individual lines? Maybe take every individual line and just make edit to SS as they come.
+                    JsonSerializerSettings settings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
+                    Message message = (Message)JsonConvert.DeserializeObject(p.ToString(), typeof(Message), settings);
+
+                    //TODO Correct HandleUpdate.
+                    switch (message.type)
+                    {
+                        case "error":
+                            //TODO Handle error messages properly.
+                            break;
+                        case "list":
+                            break;
+                        case "full send":
+                            lock (_lock)
+                            {
+                                foreach (string cellName in message.spreadsheet.Keys)
+                                {
+                                    ssModule.SetContentsOfCell(cellName, message.spreadsheet[cellName]);
+                                    char i0 = cellName[0]; ;
+                                    int col = char.ToUpper(i0) - 64;
+                                    int row = int.Parse(cellName.Substring(1, cellName.Length - 1));
+                                    MyForm.Invoke(new MethodInvoker(delegate { HandleUpdate(col, row, message.spreadsheet[cellName]); }));
+                                }
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                    //HandleUpdate(message);
 
                     // Then remove it from the SocketState's growable buffer
                     ss.sb.Remove(0, p.Length);
@@ -263,7 +312,7 @@ namespace SpreadsheetGUI
             }
             try
             {
-                MyForm.Invoke(new MethodInvoker(() => MyForm.Invalidate(true))); //TODO Validate necessity
+                MyForm.Invoke(new MethodInvoker(() => MyForm.Invalidate(true)));
             }
             //  When the window is closed, this throws an exception. Will now close more gracefully
             catch (Exception e)
@@ -280,15 +329,13 @@ namespace SpreadsheetGUI
         /// <param name="password">The user's password</param>
         /// <param name="spreadsheet">The user's requested spreadsheet</param>
         /// <returns>True if connection is successful, false if not.</returns>
-        public bool StartConnection(string address, string user, string pssw)
+        public bool StartConnection(string address)
         {
             //  Connect to Socket
             try
             {
                 //  Give network FirstContact so we can get our variables before reading more msgs
-                Network.ConnectToServer(address, username, password, FirstContact, ProcessMessage);
-                username = user;
-                password = pssw;
+                Network.ConnectToServer(address, FirstContact, ProcessMessage);
             }
             //  If failed, let View know
             catch (Exception)
@@ -299,20 +346,21 @@ namespace SpreadsheetGUI
             return true;
         }
 
+        public void SetSpreadsheetNames(List<string> names)
+        {
+            spreadsheetNames = new List<string>();
+            foreach (string sheet in names)
+            {
+                spreadsheetNames.Add(sheet);
+            }
+        }
 
         public IEnumerable<string> GetSpreadsheetNames()
         {
-            SpreadsheetNames = new List<string>();
-            //  TODO ask server for names
-
-            /***************DELETE***************/
-            yield return "hello";
-            yield return "how";
-            yield return "are";
-            yield return "you";
-            yield return "today";
-            yield return "?";
-            /***************DELETE***************/
+            foreach (string name in spreadsheetNames)
+            {
+                yield return name;
+            }
         }
 
 
@@ -320,7 +368,7 @@ namespace SpreadsheetGUI
         /// Sends server request Json messages based around a supplied enum key.
         /// </summary>
         /// <param name="keyword"></param>
-        public void SendJson(MessageKey key, int col, int row)
+        public void SendJson(MessageKey key, int col = 0, int row = 0, string sheet = null)
         {
             switch (key)
             {
@@ -329,17 +377,18 @@ namespace SpreadsheetGUI
                         Message message = new Message();
                         string jsonMessage;
                         string cellName = window.GetName(col, row);
-                        var cellValue = ssModule.GetCellContents(cellName);
+                        var cellValue = sheet;
+                        if (cellValue.GetType() == typeof(Formula))
+                            cellValue = "=" + cellValue.ToString();
                         List<string> dependees = new List<string>();
                         foreach (string dependee in ssModule.dg.GetDependees(cellName))
                         {
                             dependees.Add(dependee);
                         }
                         message.type = "edit";
-                        message.value = cellValue; //TODO Verify this cast doesn't cause issue.
+                        message.value = cellValue;
                         message.cell = cellName;
                         message.dependencies = dependees;
-                        Console.WriteLine(message);
 
                         //Format jsonMessage to ignore null properties.
                         jsonMessage = JsonConvert.SerializeObject(message, Newtonsoft.Json.Formatting.None,
@@ -348,6 +397,7 @@ namespace SpreadsheetGUI
                                     NullValueHandling = NullValueHandling.Ignore
                                 });
 
+                        jsonMessage = jsonMessage + "\n\n";
                         Console.WriteLine(jsonMessage);
                         Network.Send(socket, jsonMessage);
                         break;
@@ -356,7 +406,9 @@ namespace SpreadsheetGUI
                     {
                         Message message = new Message();
                         message.type = "open";
-                        message.name = "";//TODO pipe in spreadsheet name from list.
+                        message.name = "alpha"; //TODO return to sheet
+                        message.username = username;
+                        message.password = password;
 
                         string jsonMessage = JsonConvert.SerializeObject(message, Newtonsoft.Json.Formatting.None,
                                 new JsonSerializerSettings
@@ -364,6 +416,8 @@ namespace SpreadsheetGUI
                                     NullValueHandling = NullValueHandling.Ignore
                                 });
 
+                        jsonMessage = jsonMessage + "\n\n";
+                        Console.WriteLine(jsonMessage);
                         Network.Send(socket, jsonMessage);
                         break;
                     }
@@ -378,6 +432,8 @@ namespace SpreadsheetGUI
                                     NullValueHandling = NullValueHandling.Ignore
                                 });
 
+                        jsonMessage = jsonMessage + "\n\n";
+                        Console.WriteLine(jsonMessage);
                         Network.Send(socket, jsonMessage);
                         break;
                     }
@@ -394,6 +450,8 @@ namespace SpreadsheetGUI
                                     NullValueHandling = NullValueHandling.Ignore
                                 });
 
+                        jsonMessage = jsonMessage + "\n\n";
+                        Console.WriteLine(jsonMessage);
                         Network.Send(socket, jsonMessage);
                         break;
                     }

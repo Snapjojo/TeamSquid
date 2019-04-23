@@ -145,9 +145,9 @@
         private System.Windows.Forms.Label server_label;
         private System.Windows.Forms.Label username_label;
         private System.Windows.Forms.Label password_label;
-        private System.Windows.Forms.TextBox server_text;
-        private System.Windows.Forms.TextBox username_text;
-        private System.Windows.Forms.TextBox password_text;
+        public System.Windows.Forms.TextBox server_text;
+        public System.Windows.Forms.TextBox username_text;
+        public System.Windows.Forms.TextBox password_text;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button connect_button;
         private System.Windows.Forms.Label error_text;

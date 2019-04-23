@@ -406,14 +406,10 @@ namespace SS {
         /// set {A1, B1, C1} is returned.
         /// </summary>
         /// <exception cref="SS.InvalidNameException">If name is Null or invalid</exception>
-        /// <exception cref="SS.CircularException">If Cel contains circular reference</exception>
         protected override ISet<string> SetCellContents(string name, Formula formula) {
 
             //This cell will depend on these cells
             List<String> dependants = new List<String>(formula.GetVariables());
-
-            //check if adding and dependants will result in circular ref.
-            CheckCircular(name, new Stack<String>(dependants), new List<String>());
 
             //Passed Circular checks | Assign
             SetCellAssist(name, formula, formula.GetType());
@@ -434,16 +430,7 @@ namespace SS {
 
             }
 
-            //Get cells that need to be recalculated
-            ISet<String> cellsToRecalculate = new HashSet<String>(GetCellsToRecalculate(name));
-
-            //Don't calculate if all dependants will be formula errors anyway.
-            if (GetCellValue(name).GetType() != typeof(SS.FormulaError)) {
-                //recalculate them
-                Recalculate(cellsToRecalculate);
-            }
-
-            return cellsToRecalculate;
+            return null;
         }
 
         /// <summary>
@@ -489,7 +476,7 @@ namespace SS {
 
             CheckName(name);
             name = name.ToUpper();
-
+            
             //Try to parse content as double
             if (Double.TryParse(content, out double doubContent)) {
                 return SetCellContents(name, doubContent);
@@ -642,35 +629,5 @@ namespace SS {
             return (Double)activeCells[name.ToUpper()].GetValue();
         }
 
-        /// <summary>
-        /// For each cell name in queue, searches for any dependees that equal name.
-        /// If a match is found throws a CircularDependance exception.
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="q"></param>
-        /// <param name="visited"></param>
-        /// <exception cref="SS.CircularException">If a circular reference is found</exception>
-        private void CheckCircular(string name, Stack<string> q, List<String> visited) {
-            //If the queue is not empty
-            while (q.Count > 0) {
-
-                //If the value at the top of the queue matches name
-                //Circular reference was found
-                if (q.Peek().Equals(name)) {
-                    throw new CircularException();
-                }
-                //If not add any of the dependees of the first element
-                // that have not already been visited.
-                foreach (String s in dg.GetDependees(q.Pop())) {
-                    if (!visited.Contains(s)) {
-                        q.Push(s);
-                        visited.Add(s);
-                    }
-                }
-
-                //Run this method again
-                CheckCircular(name, q, visited);
-            }
-        }
     }
 }

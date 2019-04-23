@@ -57,7 +57,6 @@ namespace SpreadsheetGUI {
             this.ContentBox.Name = "ContentBox";
             this.ContentBox.Size = new System.Drawing.Size(1165, 30);
             this.ContentBox.TabIndex = 1;
-            this.ContentBox.TextChanged += new System.EventHandler(this.ContentBox_TextChanged);
             this.ContentBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ContentBox_KeyDown);
             // 
             // ContentLabel
@@ -159,12 +158,6 @@ namespace SpreadsheetGUI {
             this.openItem.Size = new System.Drawing.Size(197, 28);
             this.openItem.Text = "Open";
             this.openItem.Click += new System.EventHandler(this.OpenItem_Click);
-            // 
-            // newSheetToolStripMenuItem
-            // 
-            this.newSheetToolStripMenuItem.Name = "newSheetToolStripMenuItem";
-            this.newSheetToolStripMenuItem.Size = new System.Drawing.Size(179, 28);
-            this.newSheetToolStripMenuItem.Text = "New Sheet";
             // 
             // optionsToolStripMenuItem
             // 

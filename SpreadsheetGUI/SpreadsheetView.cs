@@ -7,8 +7,6 @@ namespace SpreadsheetGUI {
 
         event Action NewEvent;
 
-        event Action<string> SaveEvent;
-
         event Action<int,int,string> UpdateEvent;
 
         event Action<string> FileChosenEvent;
