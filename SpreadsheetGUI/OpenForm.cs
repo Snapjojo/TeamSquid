@@ -52,7 +52,7 @@ namespace SpreadsheetGUI
             error_label.Text = "Opening...";
             
             //  Report the title of the spreadsheet
-            report(options_box.Items[0].ToString());
+            report(options_box.SelectedItem.ToString());
         }
     }
 }

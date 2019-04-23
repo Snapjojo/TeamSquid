@@ -218,7 +218,7 @@ namespace SpreadsheetGUI
             parts[0] = parts[0].Substring(0, parts[0].Length - 1);
 
             JsonSerializerSettings settings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
-            Message message = (Message) JsonConvert.DeserializeObject(parts[0].ToString(), typeof(Message), settings);
+            Message message = (Message)JsonConvert.DeserializeObject(parts[0].ToString(), typeof(Message), settings);
 
             //Ensure this is the same controller created in the view
             SetSpreadsheetNames(message.spreadsheets);
@@ -267,7 +267,7 @@ namespace SpreadsheetGUI
                         ss.sb.Remove(0, p.Length);
                         continue;
                     }
-                    if(p == "\n")
+                    if (p == "\n")
                     {
                         ss.sb.Remove(0, p.Length);
                         continue;
@@ -357,7 +357,7 @@ namespace SpreadsheetGUI
 
         public IEnumerable<string> GetSpreadsheetNames()
         {
-            //spreadsheetNames = new List<string> { "a", "b", "c" };      //  DEBUG: Delete this line
+            spreadsheetNames = new List<string> { "a", "b", "c" };      //  TODO: Delete this line
             foreach (string name in spreadsheetNames)
             {
                 yield return name;
@@ -407,7 +407,7 @@ namespace SpreadsheetGUI
                     {
                         Message message = new Message();
                         message.type = "open";
-                        message.name = "alpha"; //TODO return to sheet
+                        message.name = sheet;
                         message.username = username;
                         message.password = password;
 
