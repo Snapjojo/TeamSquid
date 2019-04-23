@@ -32,6 +32,8 @@ namespace SpreadsheetGUI
 
         public static List<string> spreadsheetNames;
 
+        public static bool canUpdate;
+
         private SpreadsheetView window;
 
         public Spreadsheet ssModule;
@@ -102,20 +104,25 @@ namespace SpreadsheetGUI
         /// <param name="name"></param>
         private void HandleChange(String name)
         {
-            Object content = ssModule.GetCellContents(name);
-            String convertContents;
+            if (canUpdate)
+            {
+                Object content = ssModule.GetCellValue(name);
+                String convertContents;
 
-            if (content.GetType() == typeof(Formula))
-            {
-                convertContents = "=" + content.ToString();
+                if (content.GetType() == typeof(Formula))
+                {
+                    convertContents = "=" + content.ToString();
+                }
+                else
+                {
+                    convertContents = content.ToString();
+                }
+                window.UpdateContentBox(convertContents);
+                window.UpdateValueBox(ssModule.GetCellValue(name).ToString());
+                window.UpdateNameBox(name);
+
+                canUpdate = false;
             }
-            else
-            {
-                convertContents = content.ToString();
-            }
-            window.UpdateContentBox(convertContents);
-            window.UpdateValueBox(ssModule.GetCellValue(name).ToString());
-            window.UpdateNameBox(name);
         }
 
         /// <summary>
@@ -131,12 +138,12 @@ namespace SpreadsheetGUI
             String name = window.GetName(col, row);
             try
             {
+                HandleChange(name);
                 ssModule.SetContentsOfCell(name, content);
 
                 window.UpdateErrorLabel(false, "");
                 window.DrawCell(col, row, ssModule.GetCellValue(name).ToString());
                 DrawFromFile();
-                HandleChange(name);
             }
             catch (Exception e)
             {
@@ -226,6 +233,11 @@ namespace SpreadsheetGUI
             //Set the callback to be our processMessage method.
             ss.callMe = ProcessMessage;
             Network.ConfigureCallBack(ss);
+        }
+
+        internal void CanUpdate()
+        {
+            canUpdate = true;
         }
 
 
