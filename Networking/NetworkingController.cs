@@ -41,13 +41,15 @@ namespace NetworkingController {
 
             ////  Save the ProcessMessage method
             ss.callMe = _firstContact;
-
+            System.Console.WriteLine("What ?");
             //  Start up the socket
             socket.BeginConnect(ipAddress, port, ConnectedCallback, ss);
 
-            //  Follow through with FirstContact method, which will start a continuous loop
-            lock(_lock)
-                GetData(ss);
+            System.Threading.Thread.Sleep(1000);
+            //  Follow through with FirstContact method
+            GetData(ss);
+
+            System.Console.WriteLine("Skipped");
         }
 
         /// <summary>
@@ -104,7 +106,9 @@ namespace NetworkingController {
         /// </summary>
         /// <param name="ss"></param>
         public static void GetData(SocketState ss) {
-            ss.theSocket.BeginReceive(ss.messageBuffer, 0, ss.messageBuffer.Length, SocketFlags.None, ReceiveCallback, ss);
+            System.Console.WriteLine("GetDataCalled");
+            ss.theSocket.BeginReceive(ss.messageBuffer, 0, ss.messageBuffer.Length, SocketFlags.None, ReceiveCallbackSingle, ss);
+            System.Console.WriteLine("GetDataFinished");
         }
 
         /// <summary>
@@ -134,52 +138,89 @@ namespace NetworkingController {
             ss.theSocket.EndConnect(ar);
         }
 
+
+
+
+
+
+        private static void ReceiveCallbackSingle(IAsyncResult ar)
+        {
+            System.Console.WriteLine("ADWADWA");
+            int numBytes = 0;
+
+            // Get the SocketState representing the connection on which data was received
+            SocketState ss = (SocketState)ar.AsyncState;
+            //  Attempt to receive information, although partner may have disconnected.
+            try
+            {
+                numBytes = ss.theSocket.EndReceive(ar);
+            }
+            catch (SocketException se)
+            {
+                ss.closed(ss.ID);
+            }
+
+            // Convert the raw bytes to a string           
+            if (numBytes > 0)
+            {
+                string message = Encoding.UTF8.GetString(ss.messageBuffer, 0, numBytes);
+
+                ss.sb.Append(message);
+                ss.callMe(ss);
+            }
+
+        }
+
+
+
         /// <summary>
         /// This method is invoked on its own thread when data arrives.
         /// </summary>
         /// <param name="ar"></param>
-        private static void ReceiveCallback(IAsyncResult ar) {
-            lock (_lock)
+        private static void ReceiveCallback(IAsyncResult ar)
+        {
+            int numBytes = 0;
+
+            // Get the SocketState representing the connection on which data was received
+            SocketState ss = (SocketState)ar.AsyncState;
+            //  Attempt to receive information, although partner may have disconnected.
+            try
             {
-                int numBytes = 0;
+                numBytes = ss.theSocket.EndReceive(ar);
+            }
+            catch (SocketException se)
+            {
+                ss.closed(ss.ID);
+            }
 
-                // Get the SocketState representing the connection on which data was received
-                SocketState ss = (SocketState)ar.AsyncState;
+            // Convert the raw bytes to a string           
+            if (numBytes > 0)
+            {
+                string message = Encoding.UTF8.GetString(ss.messageBuffer, 0, numBytes);
 
-                //  Attempt to receive information, although partner may have disconnected.
+                ss.sb.Append(message);
+                ss.callMe(ss);
+
                 try
                 {
-                    numBytes = ss.theSocket.EndReceive(ar);
+                    ss.theSocket.BeginReceive(ss.messageBuffer, 0, ss.messageBuffer.Length,
+                        SocketFlags.None, ReceiveCallback, ss);
                 }
                 catch (SocketException se)
                 {
                     ss.closed(ss.ID);
                 }
-
-                // Convert the raw bytes to a string           
-                if (numBytes > 0)
-                {
-                    string message = Encoding.UTF8.GetString(ss.messageBuffer, 0, numBytes);
-
-                    ss.sb.Append(message);
-                    ss.callMe(ss);
-
-                    try
-                    {
-                        ss.theSocket.BeginReceive(ss.messageBuffer, 0, ss.messageBuffer.Length,
-                            SocketFlags.None, ReceiveCallback, ss);
-                    }
-                    catch (SocketException se)
-                    {
-                        ss.closed(ss.ID);
-                    }
-                }
-
-                // Wait for more data from the server. This creates an "event loop".
-                // ReceiveCallback will be invoked every time new data is available on the socket.
-                ss.theSocket.BeginReceive(ss.messageBuffer, 0, ss.messageBuffer.Length,
-                  SocketFlags.None, ReceiveCallback, ss);
             }
+
+            // Wait for more data from the server. This creates an "event loop".
+            // ReceiveCallback will be invoked every time new data is available on the socket.
+            ss.theSocket.BeginReceive(ss.messageBuffer, 0, ss.messageBuffer.Length,
+              SocketFlags.None, ReceiveCallback, ss);
+        }
+
+        public static void ConfigureCallBack(SocketState ss)
+        {
+            ss.theSocket.BeginReceive(ss.messageBuffer, 0, ss.messageBuffer.Length, SocketFlags.None, ReceiveCallback, ss);
         }
 
         /// <summary>

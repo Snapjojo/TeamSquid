@@ -1,5 +1,6 @@
 ﻿using SSGui;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -19,6 +20,7 @@ namespace SpreadsheetGUI {
         /// </summary>
         public SpreadsheetGui()
         {
+            controller = new Controller(this);
             active = true;
 
             //  Launch login form
@@ -41,11 +43,11 @@ namespace SpreadsheetGUI {
         /// <returns></returns>
         public bool Login(string server)
         {
-            controller = new Controller(this);
             logged_in = controller.StartConnection(server);
             if (logged_in)
             {
                 controller.MyForm = this;
+                controller.SetAuthentication(login_form.password_text.Text, login_form.username_text.Text);
                 return true;
             }
             return false;
@@ -75,7 +77,7 @@ namespace SpreadsheetGUI {
             ss_selected = "";
             open = new OpenForm(controller.GetSpreadsheetNames, GetSelection);
             open.FormClosed += new FormClosedEventHandler(CloseApp);
-            Application.Run(open);
+            //Application.Run(open);//TODO Wess why is crashing (new thread issue?)
 
             Console.WriteLine(ss_selected);
 
@@ -161,8 +163,7 @@ namespace SpreadsheetGUI {
         private void OpenItem_Click(object sender, EventArgs e) {
             string spreadsheetName = Open();
 
-            controller.SendJson(Controller.MessageKey.Open, 0, 0, login_form.username_text.Text,
-                login_form.password_text.Text, spreadsheetName);
+            controller.SendJson(Controller.MessageKey.Open, 0, 0, spreadsheetName);
         }
 
         /// <summary>
@@ -187,7 +188,7 @@ namespace SpreadsheetGUI {
                         int row, col;
                         spreadsheetPanel1.GetSelection(out col, out row);
                         spreadsheetPanel1.Select();
-                        controller.SendJson(Controller.MessageKey.Edit, col, row);
+                        controller.SendJson(Controller.MessageKey.Edit, col, row, ContentBox.Text);
 
                         //Move to next cell
                         Spreadsheet_KeyDown(spreadsheetPanel1, new KeyEventArgs(Keys.Down));

@@ -32,7 +32,7 @@ namespace SpreadsheetGUI
 
         public void AutoLogin()
         {
-            server_text.Text = "18.222.24.131";   //  Wess' server
+            server_text.Text = "18.221.160.218";   //  Wess' server
             username_text.Text = "Jojo";
             password_text.Text = "asdf";
         }
@@ -97,6 +97,7 @@ namespace SpreadsheetGUI
 
             // Have controller attempt connection
             bool success = login(server_text.Text);
+            System.Threading.Thread.Sleep(1000);
             if (success)
             {
                 //  Update form access & labels

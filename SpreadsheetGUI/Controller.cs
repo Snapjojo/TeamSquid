@@ -30,11 +30,11 @@ namespace SpreadsheetGUI
         //  Public properties
         public Form MyForm { get; set; }
 
-        public List<string> spreadsheetNames;
+        public static List<string> spreadsheetNames;
 
         private SpreadsheetView window;
 
-        private Spreadsheet ssModule;
+        public Spreadsheet ssModule;
 
         /// <summary>
         /// Constructor contollor for when a new/blank spreadsheet is added.
@@ -49,6 +49,12 @@ namespace SpreadsheetGUI
             window.CloseEvent += HandleClose;
             window.SelectionEvent += HandleChange;
             window.UpdateEvent += HandleUpdate;
+        }
+
+        internal void SetAuthentication(string password_text, string username_text)
+        {
+            username = username_text;
+            password = password_text;
         }
 
         /// <summary>
@@ -186,6 +192,7 @@ namespace SpreadsheetGUI
         /// <param name="ss"></param>
         private void FirstContact(SocketState ss)
         {
+            System.Console.WriteLine("FirstContact Hit");
             // Save the newly-created socket
             socket = ss.theSocket;
 
@@ -213,10 +220,12 @@ namespace SpreadsheetGUI
             JsonSerializerSettings settings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
             Message message = (Message) JsonConvert.DeserializeObject(parts[0].ToString(), typeof(Message), settings);
 
+            //Ensure this is the same controller created in the view
             SetSpreadsheetNames(message.spreadsheets);
 
             //Set the callback to be our processMessage method.
             ss.callMe = ProcessMessage;
+            Network.ConfigureCallBack(ss);
         }
 
 
@@ -226,6 +235,7 @@ namespace SpreadsheetGUI
         /// <param name="ss"></param>
         private void ProcessMessage(SocketState ss)
         {
+            System.Console.WriteLine("ProcessMessage Hit");
             string totalData = ss.sb.ToString();
             string[] parts = Regex.Split(totalData, @"(?<=[\n\n])");
 
@@ -251,8 +261,13 @@ namespace SpreadsheetGUI
             {
                 foreach (string p in parts)
                 {
-                    // Ignore empty strings added by the regex splitter
+                    // Ignore empty strings added by the regex splitter and single endline characters from the split
                     if (p.Length == 0)
+                    {
+                        ss.sb.Remove(0, p.Length);
+                        continue;
+                    }
+                    if(p == "\n")
                     {
                         ss.sb.Remove(0, p.Length);
                         continue;
@@ -261,10 +276,34 @@ namespace SpreadsheetGUI
                     // The regex splitter will include the last string even if it doesn't end with a '\n',
                     if (p[p.Length - 1] != '\n')
                         break;
+
                     JsonSerializerSettings settings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
                     Message message = (Message)JsonConvert.DeserializeObject(p.ToString(), typeof(Message), settings);
-                    
+
                     //TODO Correct HandleUpdate.
+                    switch (message.type)
+                    {
+                        case "error":
+                            //TODO Handle error messages properly.
+                            break;
+                        case "list":
+                            break;
+                        case "full send":
+                            lock (_lock)
+                            {
+                                foreach (string cellName in message.spreadsheet.Keys)
+                                {
+                                    ssModule.SetContentsOfCell(cellName, message.spreadsheet[cellName]);
+                                    char i0 = cellName[0]; ;
+                                    int col = char.ToUpper(i0) - 64;
+                                    int row = int.Parse(cellName.Substring(1, cellName.Length - 1));
+                                    MyForm.Invoke(new MethodInvoker(delegate { HandleUpdate(col, row, message.spreadsheet[cellName]); }));
+                                }
+                            }
+                            break;
+                        default:
+                            break;
+                    }
                     //HandleUpdate(message);
 
                     // Then remove it from the SocketState's growable buffer
@@ -329,7 +368,7 @@ namespace SpreadsheetGUI
         /// Sends server request Json messages based around a supplied enum key.
         /// </summary>
         /// <param name="keyword"></param>
-        public void SendJson(MessageKey key, int col = 0, int row = 0, string user = null, string password = null, string sheet = null)
+        public void SendJson(MessageKey key, int col = 0, int row = 0, string sheet = null)
         {
             switch (key)
             {
@@ -338,7 +377,7 @@ namespace SpreadsheetGUI
                         Message message = new Message();
                         string jsonMessage;
                         string cellName = window.GetName(col, row);
-                        var cellValue = ssModule.GetCellContents(cellName);
+                        var cellValue = sheet;
                         if (cellValue.GetType() == typeof(Formula))
                             cellValue = "=" + cellValue.ToString();
                         List<string> dependees = new List<string>();
@@ -358,6 +397,7 @@ namespace SpreadsheetGUI
                                     NullValueHandling = NullValueHandling.Ignore
                                 });
 
+                        jsonMessage = jsonMessage + "\n\n";
                         Console.WriteLine(jsonMessage);
                         Network.Send(socket, jsonMessage);
                         break;
@@ -366,7 +406,9 @@ namespace SpreadsheetGUI
                     {
                         Message message = new Message();
                         message.type = "open";
-                        message.name = sheet;
+                        message.name = "alpha"; //TODO return to sheet
+                        message.username = username;
+                        message.password = password;
 
                         string jsonMessage = JsonConvert.SerializeObject(message, Newtonsoft.Json.Formatting.None,
                                 new JsonSerializerSettings
@@ -374,6 +416,7 @@ namespace SpreadsheetGUI
                                     NullValueHandling = NullValueHandling.Ignore
                                 });
 
+                        jsonMessage = jsonMessage + "\n\n";
                         Console.WriteLine(jsonMessage);
                         Network.Send(socket, jsonMessage);
                         break;
@@ -389,6 +432,7 @@ namespace SpreadsheetGUI
                                     NullValueHandling = NullValueHandling.Ignore
                                 });
 
+                        jsonMessage = jsonMessage + "\n\n";
                         Console.WriteLine(jsonMessage);
                         Network.Send(socket, jsonMessage);
                         break;
@@ -406,6 +450,7 @@ namespace SpreadsheetGUI
                                     NullValueHandling = NullValueHandling.Ignore
                                 });
 
+                        jsonMessage = jsonMessage + "\n\n";
                         Console.WriteLine(jsonMessage);
                         Network.Send(socket, jsonMessage);
                         break;
