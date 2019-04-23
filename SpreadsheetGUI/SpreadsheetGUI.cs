@@ -81,11 +81,6 @@ namespace SpreadsheetGUI {
             return ss_selected;
         }
 
-        public void ReceiveSheetName(string name)
-        {
-
-        }
-
         /// <summary>
         /// Panel Changed
         /// </summary>
