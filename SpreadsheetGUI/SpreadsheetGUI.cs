@@ -77,9 +77,7 @@ namespace SpreadsheetGUI {
             ss_selected = "";
             open = new OpenForm(controller.GetSpreadsheetNames, GetSelection);
             open.FormClosed += new FormClosedEventHandler(CloseApp);
-            //Application.Run(open);//TODO Wess why is crashing (new thread issue?)
-
-            Console.WriteLine(ss_selected);
+            open.ShowDialog();
 
             return ss_selected; //TODO return the openform's selected server name.
         }

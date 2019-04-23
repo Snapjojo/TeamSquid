@@ -192,7 +192,7 @@ namespace SpreadsheetGUI
         /// <param name="ss"></param>
         private void FirstContact(SocketState ss)
         {
-            System.Console.WriteLine("FirstContact Hit");
+            //System.Console.WriteLine("FirstContact Hit");             //  Commented by Wess
             // Save the newly-created socket
             socket = ss.theSocket;
 
@@ -235,7 +235,7 @@ namespace SpreadsheetGUI
         /// <param name="ss"></param>
         private void ProcessMessage(SocketState ss)
         {
-            System.Console.WriteLine("ProcessMessage Hit");
+            //System.Console.WriteLine("ProcessMessage Hit");             //  Commented by Wess
             string totalData = ss.sb.ToString();
             string[] parts = Regex.Split(totalData, @"(?<=[\n\n])");
 
@@ -317,7 +317,7 @@ namespace SpreadsheetGUI
             //  When the window is closed, this throws an exception. Will now close more gracefully
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                //Console.WriteLine(e.Message);             //  Commented by Wess
             }
         }
 
@@ -348,7 +348,7 @@ namespace SpreadsheetGUI
 
         public void SetSpreadsheetNames(List<string> names)
         {
-            spreadsheetNames = new List<string>();
+            //spreadsheetNames = new List<string>();
             foreach (string sheet in names)
             {
                 spreadsheetNames.Add(sheet);
@@ -357,6 +357,7 @@ namespace SpreadsheetGUI
 
         public IEnumerable<string> GetSpreadsheetNames()
         {
+            //spreadsheetNames = new List<string> { "a", "b", "c" };      //  DEBUG: Delete this line
             foreach (string name in spreadsheetNames)
             {
                 yield return name;
@@ -398,7 +399,7 @@ namespace SpreadsheetGUI
                                 });
 
                         jsonMessage = jsonMessage + "\n\n";
-                        Console.WriteLine(jsonMessage);
+                        //Console.WriteLine(jsonMessage);         //  Commented by wess
                         Network.Send(socket, jsonMessage);
                         break;
                     }
@@ -417,7 +418,7 @@ namespace SpreadsheetGUI
                                 });
 
                         jsonMessage = jsonMessage + "\n\n";
-                        Console.WriteLine(jsonMessage);
+                        //Console.WriteLine(jsonMessage);             //  Commented by Wess
                         Network.Send(socket, jsonMessage);
                         break;
                     }
@@ -433,7 +434,7 @@ namespace SpreadsheetGUI
                                 });
 
                         jsonMessage = jsonMessage + "\n\n";
-                        Console.WriteLine(jsonMessage);
+                        //Console.WriteLine(jsonMessage);             //  Commented by Wess
                         Network.Send(socket, jsonMessage);
                         break;
                     }
@@ -451,7 +452,7 @@ namespace SpreadsheetGUI
                                 });
 
                         jsonMessage = jsonMessage + "\n\n";
-                        Console.WriteLine(jsonMessage);
+                        //Console.WriteLine(jsonMessage);             //  Commented by Wess
                         Network.Send(socket, jsonMessage);
                         break;
                     }
