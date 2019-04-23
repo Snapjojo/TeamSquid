@@ -134,7 +134,6 @@ namespace SpreadsheetGUI
         /// <param name="content"></param>
         private void HandleUpdate(int col, int row, String content)
         {
-            //TODO This is where cell updates are happening. Call this with json data returned from server in ProcessMessage.
             String name = window.GetName(col, row);
             try
             {
@@ -143,7 +142,6 @@ namespace SpreadsheetGUI
 
                 window.UpdateErrorLabel(false, "");
                 window.DrawCell(col, row, ssModule.GetCellValue(name).ToString());
-                //DrawFromFile();
             }
             catch (Exception e)
             {
@@ -199,7 +197,6 @@ namespace SpreadsheetGUI
         /// <param name="ss"></param>
         private void FirstContact(SocketState ss)
         {
-            //System.Console.WriteLine("FirstContact Hit");             //  Commented by Wess
             // Save the newly-created socket
             socket = ss.theSocket;
 
@@ -247,7 +244,6 @@ namespace SpreadsheetGUI
         /// <param name="ss"></param>
         private void ProcessMessage(SocketState ss)
         {
-            //System.Console.WriteLine("ProcessMessage Hit");             //  Commented by Wess
             string totalData = ss.sb.ToString();
             string[] parts = Regex.Split(totalData, @"(?<=[\n\n])");
 
@@ -292,7 +288,6 @@ namespace SpreadsheetGUI
                     JsonSerializerSettings settings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
                     Message message = (Message)JsonConvert.DeserializeObject(p.ToString(), typeof(Message), settings);
 
-                    //TODO Correct HandleUpdate.
                     switch (message.type)
                     {
                         case "error":
@@ -317,11 +312,18 @@ namespace SpreadsheetGUI
                         default:
                             break;
                     }
-                    //HandleUpdate(message);
 
                     // Then remove it from the SocketState's growable buffer
-                    ss.sb.Remove(0, p.Length);
+                    try
+                    {
+                        ss.sb.Remove(0, p.Length);
+                    }
+                    catch(ArgumentOutOfRangeException e)
+                    {
+                        Console.WriteLine("Oops! Something went wrong with the network. Try again!");
+                    }
                 }
+                DrawFromFile();
             }
             try
             {
@@ -330,7 +332,7 @@ namespace SpreadsheetGUI
             //  When the window is closed, this throws an exception. Will now close more gracefully
             catch (Exception e)
             {
-                //Console.WriteLine(e.Message);             //  Commented by Wess
+                Console.WriteLine(e.Message);
             }
         }
 
@@ -412,7 +414,6 @@ namespace SpreadsheetGUI
                                 });
 
                         jsonMessage = jsonMessage + "\n\n";
-                        //Console.WriteLine(jsonMessage);         //  Commented by wess
                         Network.Send(socket, jsonMessage);
                         break;
                     }
@@ -431,7 +432,6 @@ namespace SpreadsheetGUI
                                 });
 
                         jsonMessage = jsonMessage + "\n\n";
-                        //Console.WriteLine(jsonMessage);             //  Commented by Wess
                         Network.Send(socket, jsonMessage);
                         break;
                     }
@@ -447,7 +447,6 @@ namespace SpreadsheetGUI
                                 });
 
                         jsonMessage = jsonMessage + "\n\n";
-                        //Console.WriteLine(jsonMessage);             //  Commented by Wess
                         Network.Send(socket, jsonMessage);
                         break;
                     }
@@ -465,7 +464,6 @@ namespace SpreadsheetGUI
                                 });
 
                         jsonMessage = jsonMessage + "\n\n";
-                        //Console.WriteLine(jsonMessage);             //  Commented by Wess
                         Network.Send(socket, jsonMessage);
                         break;
                     }
