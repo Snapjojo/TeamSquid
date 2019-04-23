@@ -51,9 +51,10 @@ namespace SpreadsheetGUI
             //  If new spreadsheet is selected
             if (options_box.SelectedItem.ToString() == " - New Spreadsheet - ")
                 report(text_new_ss.Text);
-            
+
             //  Report the title of the spreadsheet
-            report(options_box.SelectedItem.ToString());
+            else
+                report(options_box.SelectedItem.ToString());
         }
 
         private void options_box_SelectedIndexChanged(object sender, EventArgs e)

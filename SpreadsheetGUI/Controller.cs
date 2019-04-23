@@ -277,7 +277,10 @@ namespace SpreadsheetGUI
                     }
                     if (p == "\n")
                     {
-                        ss.sb.Remove(0, p.Length);
+                        try
+                        {
+                            ss.sb.Remove(0, p.Length);
+                        } catch (Exception) { }
                         continue;
                     }
 
@@ -286,7 +289,12 @@ namespace SpreadsheetGUI
                         break;
 
                     JsonSerializerSettings settings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
-                    Message message = (Message)JsonConvert.DeserializeObject(p.ToString(), typeof(Message), settings);
+                    Message message = new Message();
+                    try
+                    {
+                        message = (Message)JsonConvert.DeserializeObject(p.ToString(), typeof(Message), settings);
+                    }
+                    catch (Exception) { }
 
                     switch (message.type)
                     {
