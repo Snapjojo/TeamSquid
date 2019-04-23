@@ -32,6 +32,8 @@ namespace SpreadsheetGUI
 
         public static List<string> spreadsheetNames;
 
+        public static bool canUpdate;
+
         private SpreadsheetView window;
 
         public Spreadsheet ssModule;
@@ -102,20 +104,25 @@ namespace SpreadsheetGUI
         /// <param name="name"></param>
         private void HandleChange(String name)
         {
-            Object content = ssModule.GetCellContents(name);
-            String convertContents;
+            if (canUpdate)
+            {
+                Object content = ssModule.GetCellValue(name);
+                String convertContents;
 
-            if (content.GetType() == typeof(Formula))
-            {
-                convertContents = "=" + content.ToString();
+                if (content.GetType() == typeof(Formula))
+                {
+                    convertContents = "=" + content.ToString();
+                }
+                else
+                {
+                    convertContents = content.ToString();
+                }
+                window.UpdateContentBox(convertContents);
+                window.UpdateValueBox(ssModule.GetCellValue(name).ToString());
+                window.UpdateNameBox(name);
+
+                canUpdate = false;
             }
-            else
-            {
-                convertContents = content.ToString();
-            }
-            window.UpdateContentBox(convertContents);
-            window.UpdateValueBox(ssModule.GetCellValue(name).ToString());
-            window.UpdateNameBox(name);
         }
 
         /// <summary>
@@ -131,12 +138,12 @@ namespace SpreadsheetGUI
             String name = window.GetName(col, row);
             try
             {
+                HandleChange(name);
                 ssModule.SetContentsOfCell(name, content);
 
                 window.UpdateErrorLabel(false, "");
                 window.DrawCell(col, row, ssModule.GetCellValue(name).ToString());
-                DrawFromFile();
-                HandleChange(name);
+                //DrawFromFile();
             }
             catch (Exception e)
             {
@@ -228,6 +235,11 @@ namespace SpreadsheetGUI
             Network.ConfigureCallBack(ss);
         }
 
+        internal void CanUpdate()
+        {
+            canUpdate = true;
+        }
+
 
         /// <summary>
         /// This method processes server messages, line by line, from a supplied SocketState's string buffer.
@@ -284,9 +296,10 @@ namespace SpreadsheetGUI
                     switch (message.type)
                     {
                         case "error":
-                            //TODO Handle error messages properly.
-                            break;
-                        case "list":
+                            if (message.code == 1)
+                                Console.WriteLine("Invalid Authorization - Incorrect Username or Password");
+                            else
+                                Console.WriteLine("Circular Dependency Detected");
                             break;
                         case "full send":
                             lock (_lock)
@@ -294,9 +307,9 @@ namespace SpreadsheetGUI
                                 foreach (string cellName in message.spreadsheet.Keys)
                                 {
                                     ssModule.SetContentsOfCell(cellName, message.spreadsheet[cellName]);
-                                    char i0 = cellName[0]; ;
-                                    int col = char.ToUpper(i0) - 64;
-                                    int row = int.Parse(cellName.Substring(1, cellName.Length - 1));
+                                    char i0 = cellName[0];
+                                    int col = char.ToUpper(i0) - 65;
+                                    int row = int.Parse(cellName.Substring(1, cellName.Length - 1)) - 1;
                                     MyForm.Invoke(new MethodInvoker(delegate { HandleUpdate(col, row, message.spreadsheet[cellName]); }));
                                 }
                             }

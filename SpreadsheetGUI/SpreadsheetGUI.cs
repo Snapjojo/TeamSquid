@@ -210,11 +210,12 @@ namespace SpreadsheetGUI {
         private void SpreadsheetPanel1_SelectionChanged(SpreadsheetPanel sender) {
             if (SelectionEvent != null) {
                 int row, col;
-                /*spreadsheetPanel1.GetSelection(out col, out row);
-                SelectionEvent(GetName(col, row));*/
+                spreadsheetPanel1.GetSelection(out col, out row);
+                SelectionEvent(GetName(col, row));
                 ContentBox.Select();
-               ContentBox.SelectionStart = 0;
+                ContentBox.SelectionStart = 0;
                 ContentBox.SelectionLength = ContentBox.Text.Length;
+                controller.CanUpdate();
             }
         }
 
