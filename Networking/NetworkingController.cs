@@ -41,15 +41,12 @@ namespace NetworkingController {
 
             ////  Save the ProcessMessage method
             ss.callMe = _firstContact;
-            System.Console.WriteLine("What ?");
             //  Start up the socket
             socket.BeginConnect(ipAddress, port, ConnectedCallback, ss);
 
             System.Threading.Thread.Sleep(1000);
             //  Follow through with FirstContact method
             GetData(ss);
-
-            System.Console.WriteLine("Skipped");
         }
 
         /// <summary>
@@ -106,9 +103,7 @@ namespace NetworkingController {
         /// </summary>
         /// <param name="ss"></param>
         public static void GetData(SocketState ss) {
-            System.Console.WriteLine("GetDataCalled");
             ss.theSocket.BeginReceive(ss.messageBuffer, 0, ss.messageBuffer.Length, SocketFlags.None, ReceiveCallbackSingle, ss);
-            System.Console.WriteLine("GetDataFinished");
         }
 
         /// <summary>
@@ -145,7 +140,6 @@ namespace NetworkingController {
 
         private static void ReceiveCallbackSingle(IAsyncResult ar)
         {
-            System.Console.WriteLine("ADWADWA");
             int numBytes = 0;
 
             // Get the SocketState representing the connection on which data was received
