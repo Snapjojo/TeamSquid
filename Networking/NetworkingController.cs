@@ -130,7 +130,14 @@ namespace NetworkingController {
             SocketState ss = (SocketState)ar.AsyncState;
 
             // This is required to complete the "handshake" with the server. Both parties agree a connection is made.
-            ss.theSocket.EndConnect(ar);
+            try
+            {
+                ss.theSocket.EndConnect(ar);
+            }
+            catch(SocketException s)
+            {
+                Console.WriteLine(s.Message);
+            }
         }
 
 

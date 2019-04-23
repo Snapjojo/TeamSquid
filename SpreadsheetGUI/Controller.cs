@@ -244,29 +244,29 @@ namespace SpreadsheetGUI
         /// <param name="ss"></param>
         private void ProcessMessage(SocketState ss)
         {
-            string totalData = ss.sb.ToString();
-            string[] parts = Regex.Split(totalData, @"(?<=[\n\n])");
-
-
-            //  Wait for the connection to be finished (avg time is 20 ms)
-            int time = 5;
-            int counter = 0;
-
-            //  Put thread to sleep in small increments until the socket is connected
-            while (!socket.Connected)
-            {
-                Thread.Sleep(time);
-                counter += time;
-                //  If we've been waiting for longer than 5 seconds, give up
-                if (counter >= 5000)
-                {
-                    throw new Exception("Could not connect to the server after 5 seconds!");
-                }
-            }
-
-            // Loop until we have processed all messages.
             lock (_lock)
             {
+                string totalData = ss.sb.ToString();
+                string[] parts = Regex.Split(totalData, @"(?<=[\n\n])");
+                Message message = new Message();
+
+                //  Wait for the connection to be finished (avg time is 20 ms)
+                int time = 5;
+                int counter = 0;
+
+                //  Put thread to sleep in small increments until the socket is connected
+                while (!socket.Connected)
+                {
+                    Thread.Sleep(time);
+                    counter += time;
+                    //  If we've been waiting for longer than 5 seconds, give up
+                    if (counter >= 5000)
+                    {
+                        throw new Exception("Could not connect to the server after 5 seconds!");
+                    }
+                }
+
+                // Loop until we have processed all messages.
                 foreach (string p in parts)
                 {
                     // Ignore empty strings added by the regex splitter and single endline characters from the split
@@ -286,7 +286,15 @@ namespace SpreadsheetGUI
                         break;
 
                     JsonSerializerSettings settings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
-                    Message message = (Message)JsonConvert.DeserializeObject(p.ToString(), typeof(Message), settings);
+                    try
+                    {
+                        message = (Message)JsonConvert.DeserializeObject(p.ToString(), typeof(Message), settings);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine("Oops! Something went wrong with the network. Try again!");
+                        break;
+                    }
 
                     switch (message.type)
                     {
@@ -318,21 +326,21 @@ namespace SpreadsheetGUI
                     {
                         ss.sb.Remove(0, p.Length);
                     }
-                    catch(ArgumentOutOfRangeException e)
+                    catch (ArgumentOutOfRangeException e)
                     {
                         Console.WriteLine("Oops! Something went wrong with the network. Try again!");
                     }
+                    DrawFromFile();
                 }
-                DrawFromFile();
-            }
-            try
-            {
-                MyForm.Invoke(new MethodInvoker(() => MyForm.Invalidate(true)));
-            }
-            //  When the window is closed, this throws an exception. Will now close more gracefully
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
+                try
+                {
+                    MyForm.Invoke(new MethodInvoker(() => MyForm.Invalidate(true)));
+                }
+                //  When the window is closed, this throws an exception. Will now close more gracefully
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
             }
         }
 
